@@ -1,5 +1,6 @@
 import { Button, Form, Input, type FormProps } from "antd";
 import { LockOutlined, PhoneOutlined } from "@ant-design/icons";
+import { Link } from "react-router-dom";
 
 type FieldType = {
   username?: string;
@@ -17,6 +18,7 @@ const Login = () => {
   ) => {
     console.log("Failed:", errorInfo);
   };
+
   return (
     <div className="d-flex justify-content-center align-items-center">
       <Form
@@ -26,7 +28,7 @@ const Login = () => {
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
         autoComplete="off"
-        className="form-height shadow rounded p-3 mt-5 col-md-2"
+        className="form-height shadow rounded p-3 mt-5 col-md-3 col-sm-3 bg-white col-10"
       >
         <div className="text-center my-3">
           <h5>Si-Maxis Meters Limited</h5>
@@ -37,7 +39,9 @@ const Login = () => {
         >
           <Input
             placeholder="Phone number"
-            prefix={<PhoneOutlined className="site-form-item-icon" />}
+            prefix={
+              <PhoneOutlined className="site-form-item-icon text-primary" />
+            }
           />
         </Form.Item>
 
@@ -47,17 +51,22 @@ const Login = () => {
         >
           <Input.Password
             placeholder="Password"
-            prefix={<LockOutlined className="site-form-item-icon" />}
+            prefix={
+              <LockOutlined className="site-form-item-icon text-primary" />
+            }
           />
         </Form.Item>
 
-        <Form.Item>
-          <div className="col-md-12">
-            <Button type="primary" htmlType="submit" className="col-md-12 mt-3">
-              Login
-            </Button>
-          </div>
-        </Form.Item>
+        <div className="col-12">
+          <Button type="primary" htmlType="submit" className=" mt-3 col-12">
+            Login
+          </Button>
+        </div>
+
+        <div className="my-3 d-flex justify-content-between">
+          <small className="muted me-3">Don't have an account?</small>
+          <Link to="/register">Register</Link>
+        </div>
       </Form>
     </div>
   );
