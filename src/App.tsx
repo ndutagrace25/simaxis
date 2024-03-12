@@ -25,33 +25,31 @@ const App = () => {
               your electricity tokens directly through Si-Maxis Meters
               user-friendly platform.
             </p>
-            {!isMobile && (
-              <div className="d-flex justify-content-between">
-                <Link to="/login">
+            <div className="d-flex justify-content-between">
+              <Link to="/login">
+                <Button
+                  type="default"
+                  shape="round"
+                  className="bg-green text-white fw-bold"
+                >
+                  Login
+                </Button>
+              </Link>
+              <div>
+                <small className="small-font me-2">
+                  Don't have an account?
+                </small>
+                <Link to="/register">
                   <Button
                     type="default"
                     shape="round"
                     className="bg-green text-white fw-bold"
                   >
-                    Login
+                    Register
                   </Button>
                 </Link>
-                <div>
-                  <small className="small-font me-2">
-                    Don't have an account?
-                  </small>
-                  <Link to="/register">
-                    <Button
-                      type="default"
-                      shape="round"
-                      className="bg-green text-white fw-bold"
-                    >
-                      Register
-                    </Button>
-                  </Link>
-                </div>
               </div>
-            )}
+            </div>
           </div>
         </div>
       </div>
