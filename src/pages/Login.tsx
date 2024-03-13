@@ -72,7 +72,6 @@ const Login = () => {
 
           <div className="mb-3 mt-5 d-flex justify-content-between">
             <div className="">
-              <small className="muted me-3">Don't have an account?</small>
               <Link to="/register">Register</Link>
             </div>
             <div className="text-center text-primary  d-flex justify-content-end ">
