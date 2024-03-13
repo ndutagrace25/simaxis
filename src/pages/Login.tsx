@@ -5,7 +5,7 @@ import { NavBar, NavDetails } from "../common";
 import { useNavigate } from "react-router-dom";
 
 type FieldType = {
-  username?: string;
+  phone_number?: string;
   password?: string;
   remember?: string;
 };
@@ -43,8 +43,8 @@ const Login = () => {
             <h5>Si-Maxis Meters Limited</h5>
           </div>
           <Form.Item<FieldType>
-            name="username"
-            rules={[{ required: true, message: "Please input your username!" }]}
+            name="phone_number"
+            rules={[{ required: true, message: "Please input your phone number!" }]}
           >
             <Input
               placeholder="Phone number"
