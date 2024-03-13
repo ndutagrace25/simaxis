@@ -1,7 +1,6 @@
 import { Button, Form, Input, InputNumber, Select } from "antd";
+import { useState } from "react";
 import { NavBar } from "../common";
-import React, { useState } from "react";
-import { LockOutlined } from "@ant-design/icons";
 
 const formItemLayout = {
   labelCol: {
@@ -139,7 +138,7 @@ const Register = () => {
             <Input.Password />
           </Form.Item>
           <Form.Item wrapperCol={{ offset: 9, span: 16 }}>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" className="bg-green">
               Submit
             </Button>
           </Form.Item>
