@@ -22,7 +22,7 @@ const App = () => {
             <p className="d-flex text-justify mt-5 ">
               We are thrilled to introduce a hassle-free solution to manage your
               electricity needs conveniently. Now, you can effortlessly top up
-              your electricity tokens directly through Si-Maxis Meters
+              your electricity tokens directly through Si-Maxis'
               user-friendly platform.
             </p>
             <div className="d-flex justify-content-between">

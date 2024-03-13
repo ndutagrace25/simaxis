@@ -43,7 +43,7 @@ const Login = () => {
             <Input
               placeholder="Phone number"
               prefix={
-                <PhoneOutlined className="site-form-item-icon text-primary" />
+                <PhoneOutlined className="site-form-item-icon text-success" />
               }
             />
           </Form.Item>
@@ -55,7 +55,7 @@ const Login = () => {
             <Input.Password
               placeholder="Password"
               prefix={
-                <LockOutlined className="site-form-item-icon text-primary" />
+                <LockOutlined className="site-form-item-icon text-success" />
               }
             />
           </Form.Item>

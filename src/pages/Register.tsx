@@ -1,5 +1,7 @@
+import { NavBar } from "../common";
+
 const Register = () => {
-  return <div>Register</div>;
+  return <><NavBar/></>;
 };
 
 export default Register;

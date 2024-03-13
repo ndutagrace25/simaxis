@@ -5,9 +5,12 @@ import "bootstrap/dist/js/bootstrap.min.js";
 import { RouterProvider } from "react-router-dom";
 import router from "./routes.tsx";
 import "./index.css";
+import { ThemeProvider } from "styled-components";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <ThemeProvider theme={{}}>
+      <RouterProvider router={router} />
+    </ThemeProvider>
   </React.StrictMode>
 );
