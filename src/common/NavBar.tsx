@@ -6,9 +6,9 @@ const NavBar = () => {
     <div className="">
       <nav className="navbar navbar-expand-lg bg-white shadow-sm">
         <div className="container-fluid ">
-          <a className="navbar-brand" href="#">
+          <Link className="navbar-brand" to="/">
             Si-Maxis Meters Limited
-          </a>
+          </Link>
           <button
             className="navbar-toggler"
             type="button"

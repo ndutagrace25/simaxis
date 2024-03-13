@@ -61,14 +61,23 @@ const Login = () => {
           </Form.Item>
 
           <div className="col-12">
-            <Button type="primary" htmlType="submit" className=" mt-3 col-12 bg-green">
+            <Button
+              type="primary"
+              htmlType="submit"
+              className=" mt-3 col-12 bg-green"
+            >
               Login
             </Button>
           </div>
 
           <div className="my-3 d-flex justify-content-between">
-            <small className="muted me-3">Don't have an account?</small>
-            <Link to="/register">Register</Link>
+            <div className="">
+              <small className="muted me-3">Don't have an account?</small>
+              <Link to="/register">Register</Link>
+            </div>
+            <div className="text-center text-primary  d-flex justify-content-end ">
+              <small className="cursor">Forgot password</small>
+            </div>
           </div>
         </Form>
       </div>
