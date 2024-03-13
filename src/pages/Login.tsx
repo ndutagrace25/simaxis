@@ -1,7 +1,8 @@
 import { Button, Form, Input, type FormProps } from "antd";
 import { LockOutlined, PhoneOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
-import { NavBar } from "../common";
+import { NavBar, NavDetails } from "../common";
+import { useNavigate } from "react-router-dom";
 
 type FieldType = {
   username?: string;
@@ -10,8 +11,11 @@ type FieldType = {
 };
 
 const Login = () => {
+  const navigate = useNavigate();
+
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     console.log("Success:", values);
+    navigate("/my-account");
   };
 
   const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
@@ -22,7 +26,9 @@ const Login = () => {
 
   return (
     <>
-      <NavBar />
+      <NavBar>
+        <NavDetails />
+      </NavBar>
       <div className="d-flex justify-content-center align-items-center">
         <Form
           name="basic"

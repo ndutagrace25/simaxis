@@ -1,6 +1,8 @@
-import { Button, Form, Input, InputNumber, Select } from "antd";
+import { Button, Form, Input, InputNumber, Select, type FormProps } from "antd";
 import { useState } from "react";
-import { NavBar } from "../common";
+import { NavBar, NavDetails } from "../common";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const formItemLayout = {
   labelCol: {
@@ -13,39 +15,72 @@ const formItemLayout = {
   },
 };
 
+type FieldType = {
+  first_name?: string;
+  middle_name?: string;
+  last_name?: string;
+  id_number?: number;
+  phone_number?: number;
+  email?: string;
+  user_type?: string;
+  meter_number?: number;
+  quantity?: number;
+  location?: string;
+  plot_number?: string;
+  password?: string;
+  confirm_password?: string;
+};
+
 const Register = () => {
+  const navigate = useNavigate();
   const [user_type, setUserType] = useState("");
+
+  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
+    console.log("Success:", values);
+    if (values.password !== values.confirm_password) {
+      Swal.fire("Error", "Password didn't match!", "error");
+    } else {
+      Swal.fire(
+        "Success",
+        "You have successfully registered! Login to check your approval status",
+        "success"
+      );
+      navigate("/login");
+    }
+  };
 
   return (
     <>
-      <NavBar />
+      <NavBar>
+        <NavDetails />
+      </NavBar>
       <div className="d-flex justify-content-center align-items-center">
         <Form
           {...formItemLayout}
-          // variant="filled"
           style={{ maxWidth: 900 }}
-          className="form-height shadow rounded p-3 my-5 col-md-3 col-sm-3 bg-white col-10"
+          onFinish={onFinish}
+          className="form-height shadow rounded p-3 my-5 col-md-4 col-sm-3 bg-white col-10"
         >
           <div className="text-center my-3">
             <h5>Si-Maxis Meters Limited</h5>
           </div>
           <Form.Item
             label="First name"
-            name="First name"
+            name="first_name"
             rules={[{ required: true, message: "Please input!" }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             label="Middle name"
-            name="Middle name"
+            name="middle_name"
             rules={[{ required: true, message: "Please input!" }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             label="Last name"
-            name="Last name"
+            name="last_name"
             rules={[{ required: true, message: "Please input!" }]}
           >
             <Input />
@@ -53,28 +88,28 @@ const Register = () => {
 
           <Form.Item
             label="ID number"
-            name="ID number"
+            name="id_number"
             rules={[{ required: true, message: "Please input!" }]}
           >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item
             label="Phone number"
-            name="Phone number"
+            name="phone_number"
             rules={[{ required: true, message: "Please input!" }]}
           >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item
             label="Email"
-            name="Email"
+            name="email"
             rules={[{ required: true, message: "Please input!" }]}
           >
             <Input style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item
             label="Tenant/Landloard"
-            name="Select"
+            name="user_type"
             rules={[{ required: true, message: "Please input!" }]}
           >
             <Select
@@ -89,7 +124,7 @@ const Register = () => {
           {user_type === "Tenant" && (
             <Form.Item
               label="Meter number"
-              name="Meter number"
+              name="meter_number"
               rules={[{ required: true, message: "Please input!" }]}
             >
               <InputNumber style={{ width: "100%" }} />
@@ -99,7 +134,7 @@ const Register = () => {
             <>
               <Form.Item
                 label="Quantity"
-                name="Quantity"
+                name="quantity"
                 rules={[{ required: true, message: "Please input!" }]}
               >
                 <InputNumber
@@ -109,14 +144,14 @@ const Register = () => {
               </Form.Item>
               <Form.Item
                 label="Building Location"
-                name="Location"
+                name="location"
                 rules={[{ required: true, message: "Please input!" }]}
               >
                 <Input />
               </Form.Item>
               <Form.Item
                 label="Plot number"
-                name="Plot number"
+                name="plot_number"
                 rules={[{ required: true, message: "Please input!" }]}
               >
                 <Input />
@@ -125,14 +160,14 @@ const Register = () => {
           )}
           <Form.Item
             label="Password"
-            name="Password"
+            name="password"
             rules={[{ required: true, message: "Please input your password!" }]}
           >
             <Input.Password />
           </Form.Item>
           <Form.Item
             label="Confirm password"
-            name="Confirm password"
+            name="confirm_password"
             rules={[{ required: true, message: "Please input your password!" }]}
           >
             <Input.Password />

@@ -1,4 +1,4 @@
-import { NavBar } from "./common";
+import { NavBar, NavDetails } from "./common";
 import meterbox from "./assets/meterbox.png";
 import { Button, Image } from "antd";
 import { isMobile } from "react-device-detect";
@@ -7,7 +7,9 @@ import { Link } from "react-router-dom";
 const App = () => {
   return (
     <>
-      <NavBar />
+      <NavBar>
+        <NavDetails />
+      </NavBar>
       <div className="d-flex justify-content-center col-md-12">
         <div className="d-flex justify-content-between bg-white col-md-6 p-3 shadow-sm rounded mt-3 flex-wrap">
           <div className="col-md-6 ">
