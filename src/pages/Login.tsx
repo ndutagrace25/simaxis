@@ -70,7 +70,7 @@ const Login = () => {
             </Button>
           </div>
 
-          <div className="my-3 d-flex justify-content-between">
+          <div className="mb-3 mt-5 d-flex justify-content-between">
             <div className="">
               <small className="muted me-3">Don't have an account?</small>
               <Link to="/register">Register</Link>
