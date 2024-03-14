@@ -19,7 +19,7 @@ const TokenMeters = () => {
   ) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
 
   return (
-    <div>
+    <div className="px-3">
       <div className="mt-2 mb-3">
         <Select
           showSearch
