@@ -1,5 +1,6 @@
-import { Select, Divider, Button } from "antd";
+import { Select } from "antd";
 import { useState } from "react";
+import { MeterCard } from "../common";
 
 const TokenMeters = () => {
   const [token_meter, setTokenMeter] = useState<string | null>(null);
@@ -45,23 +46,21 @@ const TokenMeters = () => {
           ]}
         />
       </div>
-      <div className="shadow-sm rounded p-3 bg-white">
-        <div className="text-center meter-title">Meter Number: 37185698745</div>
-        <Divider />
-        <div className="d-flex justify-content-between px-3 mb-2">
-          <div>Latest token:</div>
-          <div className="meter-title">1475-0553-400-5370-9209</div>
-        </div>
-        <div className="d-flex justify-content-between px-3 mb-3">
-          <div>Device status:</div>
-          <div className="text-success meter-title">Active</div>
-        </div>
-        <div className="d-flex justify-content-center">
-          <Button className="bg-blue px-5" type="primary" shape="round">
-            Pay
-          </Button>
-        </div>
-      </div>
+      <MeterCard
+        device_status="Active"
+        meter_number={37185698745}
+        latest_token="1475-0553-400-5370-9209"
+      />
+      <MeterCard
+        device_status="Inactive"
+        meter_number={37185698846}
+        latest_token="1675-0553-400-5370-9209"
+      />
+      <MeterCard
+        device_status="Active"
+        meter_number={37185698999}
+        latest_token="1575-0553-400-5370-9209"
+      />
     </div>
   );
 };

@@ -2,5 +2,6 @@ import NotFound from "./NotFound";
 import NavBar from "./NavBar";
 import NavDetails from "./NavDetails";
 import AccountTabs from "./AccountTabs";
+import MeterCard from "./MeterCard";
 
-export { NotFound, NavBar, NavDetails, AccountTabs };
+export { NotFound, NavBar, NavDetails, AccountTabs, MeterCard };
