@@ -27,34 +27,6 @@ const Dashboard = () => {
       <div className="my-4 d-flex justify-content-center">
         <div className={isMobile ? "col-12 px-1" : "col-5 p-3"}>
           <AccountTabs />
-          {/* <div className="d-flex justify-content-between">
-            <div className="shadow-sm px-3 py-4 rounded bg-white col-5 d-flex justify-content-center align-items-center flex-column cursor mobile-card">
-              <div>
-                <img src={meterbox} width={50} height={50} />
-              </div>
-              <div className="mb-3">My Token Meters</div>
-              <Button
-                shape="round"
-                type="primary"
-                className="bg-blue text-white col-12"
-              >
-                View
-              </Button>
-            </div>
-            <div className="shadow-sm px-3 py-4 rounded bg-white col-5 d-flex justify-content-center align-items-center flex-column cursor mobile-card">
-              <div>
-                <IconMessage width={50} height={50} className="text-blue fw-light" />
-              </div>
-              <div className="mb-3">Purchased Tokens</div>
-              <Button
-                shape="round"
-                type="primary"
-                className="bg-blue text-white col-12"
-              >
-                View
-              </Button>
-            </div>
-          </div> */}
         </div>
       </div>
     </>
