@@ -67,7 +67,7 @@ body {
   }
 }
 
-@media only screen and (max-width: 2822px) {
+@media only screen and (max-width: 282px) {
   .mobile-card {
     width: 120px !important;
   }
