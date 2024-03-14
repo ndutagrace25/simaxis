@@ -4,6 +4,35 @@ import { MeterCard } from "../common";
 
 const TokenMeters = () => {
   const [token_meter, setTokenMeter] = useState<string | null>(null);
+
+  const tokenMeters = [
+    {
+      device_status: "Active",
+      meter_number: "37185698745",
+      latest_token: "1475-0553-400-5370-9209",
+    },
+    {
+      device_status: "Inactive",
+      meter_number: "37185698846",
+      latest_token: "1675-0553-400-5370-9209",
+    },
+    {
+      device_status: "Active",
+      meter_number: "37185698999",
+      latest_token: "1575-0553-400-5370-9209",
+    },
+  ];
+
+  let displayAllMeters = tokenMeters.map((item: any, key: any) => (
+    <div key={key}>
+      <MeterCard
+        device_status={item.device_status}
+        meter_number={item.meter_number}
+        latest_token={item.latest_token}
+      />
+    </div>
+  ));
+
   const onChange = (value: string) => {
     console.log(`selected ${value}`);
     setTokenMeter(value);
@@ -46,21 +75,19 @@ const TokenMeters = () => {
           ]}
         />
       </div>
-      <MeterCard
-        device_status="Active"
-        meter_number={37185698745}
-        latest_token="1475-0553-400-5370-9209"
-      />
-      <MeterCard
-        device_status="Inactive"
-        meter_number={37185698846}
-        latest_token="1675-0553-400-5370-9209"
-      />
-      <MeterCard
-        device_status="Active"
-        meter_number={37185698999}
-        latest_token="1575-0553-400-5370-9209"
-      />
+      {!token_meter
+        ? displayAllMeters
+        : tokenMeters
+            .filter((itm: any) => itm.meter_number === token_meter)
+            .map((item: any, key: any) => (
+              <div key={key}>
+                <MeterCard
+                  device_status={item.device_status}
+                  meter_number={item.meter_number}
+                  latest_token={item.latest_token}
+                />
+              </div>
+            ))}
     </div>
   );
 };

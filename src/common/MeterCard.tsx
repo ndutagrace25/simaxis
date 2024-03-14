@@ -1,7 +1,7 @@
 import { Button, Divider } from "antd";
 
 interface Props {
-  meter_number: number;
+  meter_number: string;
   latest_token: string;
   device_status: string;
 }
