@@ -32,11 +32,11 @@ a:hover {
 body {
   font-family: "Roboto", sans-serif;
   font-weight: 300;
-  font-size: 18px;
+  font-size: 17px;
   font-style: normal;
   height: 100vh !important;
   /* background-color: #fafafa; */
-  background-color: #d1dddb;
+  background-color: lightblue;
 }
 
 .bg-blue {
@@ -54,7 +54,6 @@ body {
 
 @media only screen and (max-width: 600px) {
   body {
-    /* background-color: lightblue; */
     font-size: 14px;
   }
   .mobile-card {
