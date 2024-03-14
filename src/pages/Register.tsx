@@ -173,7 +173,7 @@ const Register = () => {
             <Input.Password />
           </Form.Item>
           <Form.Item wrapperCol={{ offset: 9, span: 16 }}>
-            <Button type="primary" htmlType="submit" className="bg-green">
+            <Button type="primary" htmlType="submit" className="bg-blue">
               Submit
             </Button>
           </Form.Item>

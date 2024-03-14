@@ -17,10 +17,10 @@ const NavDetails = () => {
       <li className="nav-item">
         <Link to="/login" className="nav-link ">
           <Button
-            type="default"
+            type="primary"
             size="small"
             shape="round"
-            className="bg-green text-white fw-bold"
+            className="bg-blue text-white fw-bold"
           >
             <small>Login</small>
           </Button>
@@ -29,10 +29,10 @@ const NavDetails = () => {
       <li className="nav-item">
         <Link to="/register" className="nav-link ">
           <Button
-            type="default"
+            type="primary"
             size="small"
             shape="round"
-            className="bg-green text-white fw-bold"
+            className="bg-blue text-white fw-bold"
           >
             <small>Register</small>
           </Button>

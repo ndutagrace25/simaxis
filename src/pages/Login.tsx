@@ -44,12 +44,14 @@ const Login = () => {
           </div>
           <Form.Item<FieldType>
             name="phone_number"
-            rules={[{ required: true, message: "Please input your phone number!" }]}
+            rules={[
+              { required: true, message: "Please input your phone number!" },
+            ]}
           >
             <Input
               placeholder="Phone number"
               prefix={
-                <PhoneOutlined className="site-form-item-icon text-success" />
+                <PhoneOutlined className="site-form-item-icon text-blue" />
               }
             />
           </Form.Item>
@@ -61,7 +63,7 @@ const Login = () => {
             <Input.Password
               placeholder="Password"
               prefix={
-                <LockOutlined className="site-form-item-icon text-success" />
+                <LockOutlined className="site-form-item-icon text-blue" />
               }
             />
           </Form.Item>
@@ -70,7 +72,7 @@ const Login = () => {
             <Button
               type="primary"
               htmlType="submit"
-              className=" mt-3 col-12 bg-green"
+              className=" mt-3 col-12 bg-blue"
             >
               Login
             </Button>

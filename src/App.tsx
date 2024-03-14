@@ -32,7 +32,7 @@ const App = () => {
                 <Button
                   type="default"
                   shape="round"
-                  className="bg-green text-white fw-bold"
+                  className="bg-blue text-white fw-bold"
                 >
                   Login
                 </Button>
@@ -45,7 +45,7 @@ const App = () => {
                   <Button
                     type="default"
                     shape="round"
-                    className="bg-green text-white fw-bold"
+                    className="bg-blue text-white fw-bold"
                   >
                     Register
                   </Button>

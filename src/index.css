@@ -35,12 +35,26 @@ body {
   font-size: 18px;
   font-style: normal;
   height: 100vh !important;
-  background-color: #fafafa;
+  /* background-color: #fafafa; */
+  background-color: #d1dddb;
 }
 
-.bg-green {
-  background-color: rgb(70, 189, 97);
+.bg-blue {
+  /* background-color: rgb(70, 189, 97); */
+  background-color: #1d6a96;
 }
+
+.text-blue {
+  color: #1d6a96;
+}
+
 .cursor {
   cursor: pointer;
+}
+
+@media only screen and (max-width: 600px) {
+  body {
+    background-color: lightblue;
+    font-size: 15px;
+  }
 }
