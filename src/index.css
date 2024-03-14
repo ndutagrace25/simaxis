@@ -57,6 +57,24 @@ body {
     font-size: 14px;
   }
   .mobile-card {
-    width: 157px !important;
+    width: 180px !important;
+  }
+}
+
+@media only screen and (max-width: 392px) {
+  .mobile-card {
+    width: 160px !important;
+  }
+}
+
+@media only screen and (max-width: 2822px) {
+  .mobile-card {
+    width: 120px !important;
+  }
+  body {
+    font-size: 0.681rem;
+  }
+  .navbar-brand {
+    font-size: 15px !important;
   }
 }

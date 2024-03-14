@@ -38,7 +38,7 @@ const Dashboard = () => {
               </Button>
             </div>
             <div className="shadow-sm px-3 py-4 rounded bg-white col-5 d-flex justify-content-center align-items-center flex-column cursor mobile-card">
-              <div className="mb-3">Purchases Tokens</div>
+              <div className="mb-3">Purchased Tokens</div>
               <Button
                 shape="round"
                 type="primary"
