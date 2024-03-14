@@ -27,7 +27,7 @@ const Dashboard = () => {
       <div className="my-5 d-flex justify-content-center">
         <div className={isMobile ? "col-12 px-3" : "col-5 p-3"}>
           <div className="d-flex justify-content-between">
-            <div className="shadow-sm px-3 py-4 rounded bg-white col-5 d-flex justify-content-center align-items-center flex-column cursor">
+            <div className="shadow-sm px-3 py-4 rounded bg-white col-5 d-flex justify-content-center align-items-center flex-column cursor mobile-card">
               <div className="mb-3">My Token Meters</div>
               <Button
                 shape="round"
@@ -37,7 +37,7 @@ const Dashboard = () => {
                 View
               </Button>
             </div>
-            <div className="shadow-sm px-3 py-4 rounded bg-white col-5 d-flex justify-content-center align-items-center flex-column cursor">
+            <div className="shadow-sm px-3 py-4 rounded bg-white col-5 d-flex justify-content-center align-items-center flex-column cursor mobile-card">
               <div className="mb-3">Purchases Tokens</div>
               <Button
                 shape="round"

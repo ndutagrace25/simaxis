@@ -54,7 +54,10 @@ body {
 
 @media only screen and (max-width: 600px) {
   body {
-    background-color: lightblue;
-    font-size: 15px;
+    /* background-color: lightblue; */
+    font-size: 14px;
+  }
+  .mobile-card {
+    width: 157px !important;
   }
 }
