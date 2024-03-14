@@ -52,6 +52,10 @@ body {
   cursor: pointer;
 }
 
+.ant-select-selection-placeholder {
+  font-weight: 650 !important;
+}
+
 @media only screen and (max-width: 600px) {
   body {
     font-size: 14px;
