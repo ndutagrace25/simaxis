@@ -11,7 +11,7 @@ const App = () => {
         <NavDetails />
       </NavBar>
       <div className="d-flex justify-content-center col-md-12">
-        <div className="d-flex justify-content-between bg-white col-md-6 p-3 shadow-sm rounded mt-3 flex-wrap">
+        <div className="d-flex justify-content-between bg-white col-md-6 p-3 shadow-sm rounded mt-3 flex-wrap mx-2">
           <div className="col-md-6 ">
             <Image
               width={isMobile ? 300 : 400}
