@@ -1,8 +1,9 @@
 import { Button } from "antd";
 import { NavBar } from "../common";
-import { IconUserCircle } from "@tabler/icons-react";
+import { IconUserCircle, IconMessage } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import { isMobile } from "react-device-detect";
+import meterbox from "../assets/meterbox.png";
 
 const Dashboard = () => {
   return (
@@ -28,6 +29,9 @@ const Dashboard = () => {
         <div className={isMobile ? "col-12 px-3" : "col-5 p-3"}>
           <div className="d-flex justify-content-between">
             <div className="shadow-sm px-3 py-4 rounded bg-white col-5 d-flex justify-content-center align-items-center flex-column cursor mobile-card">
+              <div>
+                <img src={meterbox} width={50} height={50} />
+              </div>
               <div className="mb-3">My Token Meters</div>
               <Button
                 shape="round"
@@ -38,6 +42,9 @@ const Dashboard = () => {
               </Button>
             </div>
             <div className="shadow-sm px-3 py-4 rounded bg-white col-5 d-flex justify-content-center align-items-center flex-column cursor mobile-card">
+              <div>
+                <IconMessage width={50} height={50} className="text-blue fw-light" />
+              </div>
               <div className="mb-3">Purchased Tokens</div>
               <Button
                 shape="round"
