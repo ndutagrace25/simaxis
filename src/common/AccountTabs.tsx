@@ -1,16 +1,19 @@
 import { Tabs, ConfigProvider } from "antd";
 import meterbox from "../assets/meterbox.png";
 import { IconMessage } from "@tabler/icons-react";
+import { PurchasedTokens, TokenMeters } from "../pages";
 
 const AccountTabs = () => {
   const tabs = [
     {
       icon: <img src={meterbox} width={20} className="me-2" />,
       label: "My Token Meters",
+      element: <TokenMeters />,
     },
     {
       icon: <IconMessage width={20} className="me-2" />,
       label: "Purchased Tokens",
+      element: <PurchasedTokens />,
     },
   ];
   return (
@@ -37,7 +40,7 @@ const AccountTabs = () => {
               </div>
             ),
             key: id,
-            children: `Content of card tab ${id}`,
+            children: _.element,
           };
         })}
       />
