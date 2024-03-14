@@ -1,4 +1,4 @@
-import { Select } from "antd";
+import { Select, Divider, Button } from "antd";
 import { useState } from "react";
 
 const TokenMeters = () => {
@@ -19,7 +19,7 @@ const TokenMeters = () => {
 
   return (
     <div>
-      <div className="my-2">
+      <div className="mt-2 mb-3">
         <Select
           showSearch
           placeholder="Select token meter"
@@ -44,6 +44,23 @@ const TokenMeters = () => {
             },
           ]}
         />
+      </div>
+      <div className="shadow-sm rounded p-3 bg-white">
+        <div className="text-center meter-title">Meter Number: 37185698745</div>
+        <Divider />
+        <div className="d-flex justify-content-between px-3 mb-2">
+          <div>Latest token:</div>
+          <div className="meter-title">1475-0553-400-5370-9209</div>
+        </div>
+        <div className="d-flex justify-content-between px-3 mb-3">
+          <div>Device status:</div>
+          <div className="text-success meter-title">Active</div>
+        </div>
+        <div className="d-flex justify-content-center">
+          <Button className="bg-blue px-5" type="primary" shape="round">
+            Pay
+          </Button>
+        </div>
       </div>
     </div>
   );
