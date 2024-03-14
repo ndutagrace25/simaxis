@@ -30,7 +30,7 @@ const App = () => {
             <div className="d-flex justify-content-between">
               <Link to="/login">
                 <Button
-                  type="default"
+                  type="primary"
                   shape="round"
                   className="bg-blue text-white fw-bold"
                 >
@@ -43,7 +43,7 @@ const App = () => {
                 </small>
                 <Link to="/register">
                   <Button
-                    type="default"
+                    type="primary"
                     shape="round"
                     className="bg-blue text-white fw-bold"
                   >
