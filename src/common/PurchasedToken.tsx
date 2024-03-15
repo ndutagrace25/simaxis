@@ -6,7 +6,7 @@ interface Props {
 }
 const PurchasedToken = ({ item, key }: Props) => {
   return (
-    <div className="shadow-sm rounded p-3 bg-white mb-3" key={key}>
+    <div className="shadow-sm rounded p-3 bg-white mb-2" key={key}>
       <div className="d-flex justify-content-between mb-2 ">
         <div>Meter:</div>
         <div className="meter-title">{item.meter_number}</div>
