@@ -41,7 +41,7 @@ const PurchasedTokens = () => {
   ];
 
   return (
-    <div>
+    <div className="px-3">
       <div className="mb-3">
         <DatePicker maxDate={dayjs(new Date(), dateFormat)} />
       </div>
