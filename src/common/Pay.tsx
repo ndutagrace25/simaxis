@@ -1,6 +1,5 @@
 import { Modal, Input, Button } from "antd";
 import { useState } from "react";
-import mpesa from "../assets/mpesa.png";
 
 interface Props {
   isModalOpen: boolean;
