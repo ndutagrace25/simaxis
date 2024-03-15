@@ -31,12 +31,12 @@ const Pay = ({ isModalOpen, handleOk, handleCancel }: Props) => {
       }}
       cancelText="Close"
     >
-      <div className="d-flex justify-content-center flex-column align-items-center">
-        <div className="col-md-5">
+      <div className="d-flex justify-content-center flex-column align-items-center col-12">
+        <div className="col-8">
           <label className="mb-2 ">Metre number</label>
           <Input value={form_inputs.meter_number} />
         </div>
-        <div className="my-3 col-md-5">
+        <div className="my-3 col-8">
           <label className="mb-2">Phone number</label>
           <Input
             value={form_inputs.phone_number}
@@ -45,7 +45,7 @@ const Pay = ({ isModalOpen, handleOk, handleCancel }: Props) => {
             }
           />
         </div>
-        <div className="col-md-5">
+        <div className="col-8">
           <label className="mb-2">Amount</label>
           <Input
             value={form_inputs.amount}
