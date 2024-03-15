@@ -1,5 +1,6 @@
 import { Modal, Input, Button } from "antd";
 import { useState } from "react";
+import mpesa from "../assets/mpesa.png";
 
 interface Props {
   isModalOpen: boolean;
@@ -21,7 +22,7 @@ const Pay = ({ isModalOpen, handleOk, handleCancel }: Props) => {
   });
   return (
     <Modal
-      title={<div className="text-center mb-4">Top up your tokens</div>}
+      title={<div className="text-center">Top up your tokens</div>}
       open={isModalOpen}
       onOk={handleOk}
       onCancel={handleCancel}
@@ -37,7 +38,9 @@ const Pay = ({ isModalOpen, handleOk, handleCancel }: Props) => {
           <Input value={form_inputs.meter_number} />
         </div>
         <div className="my-3 col-8">
-          <label className="mb-2">Phone number</label>
+          <label className="mb-2">
+            Phone number <small>(M-PESA number)</small>
+          </label>
           <Input
             value={form_inputs.phone_number}
             onChange={(e: any) =>
