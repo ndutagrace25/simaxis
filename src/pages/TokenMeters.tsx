@@ -4,6 +4,19 @@ import { MeterCard } from "../common";
 
 const TokenMeters = () => {
   const [token_meter, setTokenMeter] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   const tokenMeters = [
     {
@@ -29,6 +42,10 @@ const TokenMeters = () => {
         device_status={item.device_status}
         meter_number={item.meter_number}
         latest_token={item.latest_token}
+        isModalOpen={isModalOpen}
+        handleOk={handleOk}
+        handleCancel={handleCancel}
+        showModal={showModal}
       />
     </div>
   ));
@@ -85,6 +102,10 @@ const TokenMeters = () => {
                   device_status={item.device_status}
                   meter_number={item.meter_number}
                   latest_token={item.latest_token}
+                  isModalOpen={isModalOpen}
+                  handleOk={handleOk}
+                  handleCancel={handleCancel}
+                  showModal={showModal}
                 />
               </div>
             ))}
