@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
 import { Link } from "react-router-dom";
+import logo from "../assets/logo.png";
+import { Avatar } from "antd";
 
 interface Props {
   children: ReactNode;
@@ -11,7 +13,11 @@ const NavBar = ({ children }: Props) => {
       <nav className="navbar navbar-expand-lg bg-white shadow-sm">
         <div className="container-fluid ">
           <Link className="navbar-brand" to="/">
-            Si-Maxis Meters Limited
+            <Avatar
+              shape="square"
+              size={70}
+              icon={<img src={logo} className="m-2" />}
+            />
           </Link>
           <button
             className="navbar-toggler"
@@ -26,7 +32,6 @@ const NavBar = ({ children }: Props) => {
           </button>
           <div className="collapse navbar-collapse" id="navbarNav">
             {children}
-          
           </div>
         </div>
       </nav>
