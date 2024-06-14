@@ -4,7 +4,7 @@ import { IconPencil } from "@tabler/icons-react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
 import { verifyCustomer } from "../../features/customer/customerSlice";
-
+// 
 const UpdateCustomer = ({
   customer_name,
   is_synced_to_stron,
