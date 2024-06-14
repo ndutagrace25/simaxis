@@ -3,15 +3,20 @@ import { Button, Modal, Spin } from "antd";
 import { IconPencil } from "@tabler/icons-react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
-import { verifyCustomer } from "../../features/customer/customerSlice";
+import {
+  updateCustomer,
+  verifyCustomer,
+} from "../../features/customer/customerSlice";
 
 const UpdateCustomer = ({
   customer_name,
   is_synced_to_stron,
   id,
+  is_verified,
 }: {
   customer_name: string;
   is_synced_to_stron: any;
+  is_verified: any;
   id: string;
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -46,6 +51,7 @@ const UpdateCustomer = ({
         onOk={handleOk}
         onCancel={handleCancel}
         cancelText="Close"
+        width={800}
         okButtonProps={{
           style: { display: "none" },
           className: "hide-onPrint",
@@ -55,6 +61,18 @@ const UpdateCustomer = ({
           <Button size="small" type="primary" className="my-3">
             Attach meter to customer
           </Button>
+          {!is_verified && (
+            <Button
+              size="small"
+              type="default"
+              className="bg-success text-white my-3"
+              onClick={() =>
+                dispatch(updateCustomer({ id, data: { is_verified: true } }))
+              }
+            >
+              Verify customer
+            </Button>
+          )}
           {!is_synced_to_stron && (
             <>
               {veryfyingCustomer ? (
@@ -67,7 +85,7 @@ const UpdateCustomer = ({
                     dispatch(verifyCustomer({ id }));
                   }}
                 >
-                  Verify customer
+                  Forward to Stron
                 </Button>
               )}
             </>

@@ -144,11 +144,22 @@ export const registerUser =
       Swal.fire("Success", response.data.message, "success");
       window.location.href = "/login";
     } catch (error: any) {
+      console.log(
+        error?.response?.data
+          ? error.response.data.message && error.response.data.errors
+            ? error.response.data.errors[0]?.message
+            : error.response.data.message && !error.response.data.errors
+            ? error.response.data.message
+            : ""
+          : error.message
+      );
       Swal.fire(
         "Error",
         error?.response?.data
-          ? error.response.data.message + error.response.data.errors
+          ? error.response.data.message && error.response.data.errors
             ? error.response.data.errors[0]?.message
+            : error.response.data.message && !error.response.data.errors
+            ? error.response.data.message
             : ""
           : error.message,
         "error"

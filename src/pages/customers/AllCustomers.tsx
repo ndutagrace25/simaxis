@@ -8,9 +8,8 @@ import UpdateCustomer from "./UpdateCustomer";
 import { appSession } from "../../utils/appStorage";
 
 const AllCustomers = () => {
-  const { customers, loadingCustomers, veryfyingCustomer } = useSelector(
-    (state: RootState) => state.customer
-  );
+  const { customers, loadingCustomers, veryfyingCustomer, updatingCustomer } =
+    useSelector((state: RootState) => state.customer);
   const dispatch = useDispatch<AppDispatch>();
   const user = appSession.getUser();
   const token = appSession.getToken();
@@ -22,13 +21,24 @@ const AllCustomers = () => {
       email: item.User.email,
       created_at: moment(item.created_at).format("MM/DD/YYYY"),
       name: `${item.first_name} ${item.middle_name} ${item.last_name}`,
-      is_synced_to_stron: (
+      is_verified: (
         <>
-          {!item.is_synced_to_stron ? (
+          {!item.is_verified ? (
             <span className="text-danger">Not verified</span>
           ) : (
             <>
               <span className="text-success">Verified</span>
+            </>
+          )}
+        </>
+      ),
+      is_synced_to_stron: (
+        <>
+          {!item.is_synced_to_stron ? (
+            <span className="text-danger">Not forwarded</span>
+          ) : (
+            <>
+              <span className="text-success">Forwarded</span>
             </>
           )}
         </>
@@ -39,6 +49,7 @@ const AllCustomers = () => {
             customer_name={`${item.first_name} ${item.middle_name} ${item.last_name}`}
             is_synced_to_stron={item.is_synced_to_stron}
             id={item.id}
+            is_verified={item.is_verified}
           />
         </>
       ),
@@ -73,6 +84,11 @@ const AllCustomers = () => {
     },
     {
       title: "Is Verified",
+      dataIndex: "is_verified",
+      key: "is_verified",
+    },
+    {
+      title: "Is Forwarded",
       dataIndex: "is_synced_to_stron",
       key: "is_synced_to_stron",
     },
@@ -97,7 +113,7 @@ const AllCustomers = () => {
       }
     },
     // @ts-ignore
-    [veryfyingCustomer, Object.keys(user).length, token]
+    [veryfyingCustomer, Object.keys(user).length, token, updatingCustomer]
   );
 
   return (
