@@ -5,12 +5,15 @@ import { Customer, getCustomers } from "../../features/customer/customerSlice";
 import { useEffect } from "react";
 import moment from "moment";
 import UpdateCustomer from "./UpdateCustomer";
+import { appSession } from "../../utils/appStorage";
 
 const AllCustomers = () => {
   const { customers, loadingCustomers, veryfyingCustomer } = useSelector(
     (state: RootState) => state.customer
   );
   const dispatch = useDispatch<AppDispatch>();
+  const user = appSession.getUser();
+  const token = appSession.getToken();
 
   const dataSource = customers.map((item: Customer) => {
     return {
@@ -85,9 +88,18 @@ const AllCustomers = () => {
     },
   ];
 
-  useEffect(() => {
-    dispatch(getCustomers());
-  }, [veryfyingCustomer]);
+  useEffect(
+    () => {
+      console.log(token, "user?.id");
+      // @ts-ignore
+      if (Object.keys(user).length > 0 && token) {
+        dispatch(getCustomers());
+      }
+    },
+    // @ts-ignore
+    [veryfyingCustomer, Object.keys(user).length, token]
+  );
+
   return (
     <div>
       {loadingCustomers || veryfyingCustomer ? (

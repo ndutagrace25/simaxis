@@ -111,9 +111,10 @@ export const loginUser =
         payload
       );
       // save auth token.
-      saveDataToSessionStorage("token", response.data.token);
+      await saveDataToSessionStorage("token", response.data.token);
       // save logged in user
-      saveDataToSessionStorage("user", response.data.user);
+      await saveDataToSessionStorage("user", response.data.user);
+      window.location.href = "/my-account";
       dispatch(setUserDetails(response.data));
     } catch (error: any) {
       Swal.fire(

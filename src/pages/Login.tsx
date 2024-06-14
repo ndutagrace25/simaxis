@@ -1,11 +1,9 @@
-import { appSession } from "../utils/appStorage";
 import { AppDispatch, RootState } from "../store";
 import { Button, Form, Input, type FormProps, Spin } from "antd";
 import { LockOutlined, PhoneOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { NavBar, NavDetails } from "../common";
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../features/auth/authSlice";
 
@@ -16,20 +14,12 @@ type FieldType = {
 };
 
 const Login = () => {
-  const navigate = useNavigate();
-  const user = appSession.getUser();
   const dispatch = useDispatch<AppDispatch>();
   const { loggingLoading } = useSelector((state: RootState) => state.auth);
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     dispatch(loginUser({ phone: values.phone, password: values.password }));
   };
-
-  useEffect(() => {
-    if (user?.id) {
-      navigate("/my-account");
-    }
-  }, [user?.id]);
 
   const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
     errorInfo
