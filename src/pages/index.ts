@@ -1,7 +1,17 @@
-import Register from "./Register";
-import Login from "./Login";
+import AdminTabs from "./AdminTabs";
 import Dashboard from "./Dashboard";
-import TokenMeters from "./TokenMeters";
+import Home from "./Home";
+import Login from "./Login";
 import PurchasedTokens from "./PurchasedTokens";
+import Register from "./Register";
+import TokenMeters from "./TokenMeters";
 
-export { Register, Login, Dashboard, TokenMeters, PurchasedTokens };
+export {
+  AdminTabs,
+  Home,
+  Dashboard,
+  Login,
+  PurchasedTokens,
+  Register,
+  TokenMeters,
+};

@@ -1,22 +1,35 @@
-import { Button, Form, Input, type FormProps } from "antd";
+import { appSession } from "../utils/appStorage";
+import { AppDispatch, RootState } from "../store";
+import { Button, Form, Input, type FormProps, Spin } from "antd";
 import { LockOutlined, PhoneOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { NavBar, NavDetails } from "../common";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../features/auth/authSlice";
 
 type FieldType = {
-  phone_number?: string;
+  phone?: string;
   password?: string;
   remember?: string;
 };
 
 const Login = () => {
   const navigate = useNavigate();
+  const user = appSession.getUser();
+  const dispatch = useDispatch<AppDispatch>();
+  const { loggingLoading } = useSelector((state: RootState) => state.auth);
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    console.log("Success:", values);
-    navigate("/my-account");
+    dispatch(loginUser({ phone: values.phone, password: values.password }));
   };
+
+  useEffect(() => {
+    if (user?.id) {
+      navigate("/my-account");
+    }
+  }, [user?.id]);
 
   const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
     errorInfo
@@ -43,7 +56,7 @@ const Login = () => {
             <h5>Si-Maxis Meters Limited</h5>
           </div>
           <Form.Item<FieldType>
-            name="phone_number"
+            name="phone"
             rules={[
               { required: true, message: "Please input your phone number!" },
             ]}
@@ -69,13 +82,17 @@ const Login = () => {
           </Form.Item>
 
           <div className="col-12">
-            <Button
-              type="primary"
-              htmlType="submit"
-              className=" mt-3 col-12 bg-blue"
-            >
-              Login
-            </Button>
+            {loggingLoading ? (
+              <Spin />
+            ) : (
+              <Button
+                type="primary"
+                htmlType="submit"
+                className=" mt-3 col-12 bg-blue"
+              >
+                Login
+              </Button>
+            )}
           </div>
 
           <div className="mb-3 mt-5 d-flex justify-content-between">

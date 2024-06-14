@@ -1,8 +1,18 @@
-import { Button, Form, Input, InputNumber, Select, type FormProps } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  InputNumber,
+  Select,
+  type FormProps,
+  Spin,
+} from "antd";
 import { useState } from "react";
 import { NavBar, NavDetails } from "../common";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../store";
+import { registerUser } from "../features/auth/authSlice";
 
 const formItemLayout = {
   labelCol: {
@@ -19,12 +29,12 @@ type FieldType = {
   first_name?: string;
   middle_name?: string;
   last_name?: string;
-  id_number?: number;
-  phone_number?: number;
+  username?: string;
+  national_id?: number;
+  phone?: string;
   email?: string;
-  user_type?: string;
+  role?: string;
   meter_number?: number;
-  quantity?: number;
   location?: string;
   plot_number?: string;
   password?: string;
@@ -32,20 +42,32 @@ type FieldType = {
 };
 
 const Register = () => {
-  const navigate = useNavigate();
-  const [user_type, setUserType] = useState("");
+  const [role, setUserType] = useState("");
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { loadingRegistration } = useSelector((state: RootState) => state.auth);
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     console.log("Success:", values);
     if (values.password !== values.confirm_password) {
       Swal.fire("Error", "Password didn't match!", "error");
     } else {
-      Swal.fire(
-        "Success",
-        "You have successfully registered! Login to check your approval status",
-        "success"
+      dispatch(
+        registerUser({
+          username: values.username,
+          phone: values.phone,
+          email: values.email,
+          role: values.role,
+          password: values.password,
+          first_name: values.first_name,
+          middle_name: values.middle_name,
+          last_name: values.last_name,
+          location: values.location,
+          national_id: values.national_id,
+          plot_number: values.plot_number,
+          meter_number: values.meter_number,
+        })
       );
-      navigate("/login");
     }
   };
 
@@ -85,20 +107,27 @@ const Register = () => {
           >
             <Input />
           </Form.Item>
+          <Form.Item
+            label="Username (unique)"
+            name="username"
+            rules={[{ required: true, message: "Please input!" }]}
+          >
+            <Input />
+          </Form.Item>
 
           <Form.Item
             label="ID number"
-            name="id_number"
+            name="national_id"
             rules={[{ required: true, message: "Please input!" }]}
           >
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item
             label="Phone number"
-            name="phone_number"
+            name="phone"
             rules={[{ required: true, message: "Please input!" }]}
           >
-            <InputNumber style={{ width: "100%" }} />
+            <Input style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item
             label="Email"
@@ -108,8 +137,8 @@ const Register = () => {
             <Input style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item
-            label="Tenant/Landloard"
-            name="user_type"
+            label="Tenant/Landlord"
+            name="role"
             rules={[{ required: true, message: "Please input!" }]}
           >
             <Select
@@ -117,11 +146,11 @@ const Register = () => {
                 { value: "Tenant", label: "Tenant" },
                 { value: "Landlord", label: "Landlord" },
               ]}
-              value={user_type}
+              value={role}
               onChange={setUserType}
             />
           </Form.Item>
-          {user_type === "Tenant" && (
+          {/* {role === "Tenant" && (
             <Form.Item
               label="Meter number"
               name="meter_number"
@@ -129,19 +158,9 @@ const Register = () => {
             >
               <InputNumber style={{ width: "100%" }} />
             </Form.Item>
-          )}
-          {user_type === "Landlord" && (
+          )} */}
+          {role === "Landlord" && (
             <>
-              <Form.Item
-                label="Quantity"
-                name="quantity"
-                rules={[{ required: true, message: "Please input!" }]}
-              >
-                <InputNumber
-                  style={{ width: "100%" }}
-                  placeholder="How many meter devices?"
-                />
-              </Form.Item>
               <Form.Item
                 label="Building Location"
                 name="location"
@@ -172,11 +191,15 @@ const Register = () => {
           >
             <Input.Password />
           </Form.Item>
-          <Form.Item wrapperCol={{ offset: 9, span: 16 }}>
-            <Button type="primary" htmlType="submit" className="bg-blue">
-              Submit
-            </Button>
-          </Form.Item>
+          {loadingRegistration ? (
+            <Spin />
+          ) : (
+            <Form.Item wrapperCol={{ offset: 9, span: 16 }}>
+              <Button type="primary" htmlType="submit" className="bg-blue">
+                Submit
+              </Button>
+            </Form.Item>
+          )}
         </Form>
       </div>
     </>
