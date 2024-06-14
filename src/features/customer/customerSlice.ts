@@ -13,7 +13,7 @@ export interface Customer {
   national_id: number;
   location: string;
   is_active: boolean;
-  is_verified: boolean;
+  is_verified: boolean | ReactElement;
   is_synced_to_stron: boolean | ReactElement;
   created_at: string | Date;
   User: {
@@ -35,6 +35,9 @@ interface CustomerState {
   verifiedCustomer: VeryfyCustomerResponse;
   veryfyingCustomer: boolean;
   veryfyingCustomerError: string | null;
+  updatedCustomer: VeryfyCustomerResponse;
+  updatingCustomer: boolean;
+  updatingCustomerError: string | null;
 }
 
 const initialState: CustomerState = {
@@ -44,6 +47,9 @@ const initialState: CustomerState = {
   verifiedCustomer: {},
   veryfyingCustomer: false,
   veryfyingCustomerError: null,
+  updatedCustomer: {},
+  updatingCustomer: false,
+  updatingCustomerError: null,
 };
 
 const authSlice = createSlice({
@@ -70,6 +76,16 @@ const authSlice = createSlice({
     setVerifyingCustomer(state, action: PayloadAction<boolean>) {
       state.veryfyingCustomer = action.payload;
     },
+    // UPDATE CUSTOMER
+    setUpdateCustomer(state, action: PayloadAction<VeryfyCustomerResponse>) {
+      state.updatedCustomer = action.payload;
+    },
+    setUpdateCustomerError(state, action: PayloadAction<string | null>) {
+      state.updatingCustomerError = action.payload;
+    },
+    setUpdatingCustomer(state, action: PayloadAction<boolean>) {
+      state.updatingCustomer = action.payload;
+    },
   },
 });
 
@@ -82,6 +98,10 @@ export const {
   setVerifyCustomer,
   setVerifyCustomerError,
   setVerifyingCustomer,
+  // update customer
+  setUpdateCustomer,
+  setUpdateCustomerError,
+  setUpdatingCustomer,
 } = authSlice.actions;
 
 export default authSlice.reducer;
@@ -128,5 +148,31 @@ export const verifyCustomer =
       );
     } finally {
       dispatch(setVerifyingCustomer(false));
+    }
+  };
+
+export const updateCustomer =
+  (payload: { id: string; data: { is_verified: boolean } }): AppThunk =>
+  async (dispatch) => {
+    dispatch(setUpdatingCustomer(true));
+    try {
+      const response = await axiosInstance.patch(
+        `/customer/${payload.id}`,
+        payload.data
+      );
+      Swal.fire("Success", response.data.message, "success");
+    } catch (error: any) {
+      Swal.fire(
+        "Error",
+        error?.response?.data ? error.response.data.message : error.message,
+        "error"
+      );
+      dispatch(
+        setUpdateCustomerError(
+          error?.response?.data ? error.response.data.message : error.message
+        )
+      );
+    } finally {
+      dispatch(setUpdatingCustomer(false));
     }
   };
