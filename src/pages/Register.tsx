@@ -4,7 +4,7 @@ import {
   Form,
   Input,
   InputNumber,
-  Select,
+  Select as AntSelect,
   type FormProps,
   Spin,
 } from "antd";
@@ -12,9 +12,11 @@ import { setKey, fromAddress } from "react-geocode";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import { NavBar, NavDetails } from "../common";
 import { registerUser } from "../features/auth/authSlice";
+import Select from "react-select";
 import Swal from "sweetalert2";
 import { useDispatch, useSelector } from "react-redux";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getLandlords, Landlord } from "../features/customer/customerSlice";
 
 const formItemLayout = {
   labelCol: {
@@ -51,36 +53,60 @@ const Register = () => {
   const [location, setLocation] = useState<any>(null);
   const [lat, setLat] = useState<any>(null);
   const [long, setLong] = useState<any>(null);
+  const [landlord_id, setLandlord] = useState<any>(null);
 
   const { loadingRegistration } = useSelector((state: RootState) => state.auth);
+  const { landlords } = useSelector((state: RootState) => state.customer);
+
+  const formattedData = landlords.map((item: Landlord) => {
+    return {
+      value: item.id,
+      label: `${item.first_name} ${item.last_name} - ${item.building_name}`,
+    };
+  });
+
+  useEffect(() => {
+    dispatch(getLandlords());
+  }, []);
+
+  const handleLandlordChange = (selectedOption: {
+    value: string;
+    label: string;
+  }) => {
+    setLandlord(selectedOption);
+  };
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    console.log("Success:", values);
     if (values.password !== values.confirm_password) {
       Swal.fire("Error", "Password didn't match!", "error");
     } else {
       if (values.role === "Landlord" && !location) {
         Swal.fire("Error", "Please select a location", "error");
       } else {
-        dispatch(
-          registerUser({
-            username: values.username,
-            phone: values.phone,
-            email: values.email,
-            role: values.role,
-            password: values.password,
-            first_name: values.first_name,
-            middle_name: values.middle_name,
-            last_name: values.last_name,
-            location,
-            lat,
-            long,
-            national_id: values.national_id,
-            building_name: values.building_name,
-            plot_number: values.plot_number,
-            meter_number: values.meter_number,
-          })
-        );
+        if (values.role === "Tenant" && !landlord_id?.value) {
+          Swal.fire("Error", "Please select a location", "error");
+        } else {
+          dispatch(
+            registerUser({
+              username: values.username,
+              phone: values.phone,
+              email: values.email,
+              role: values.role,
+              password: values.password,
+              first_name: values.first_name,
+              middle_name: values.middle_name,
+              last_name: values.last_name,
+              location,
+              lat,
+              long,
+              national_id: values.national_id,
+              building_name: values.building_name,
+              plot_number: values.plot_number,
+              meter_number: values.meter_number,
+              landlord_id: landlord_id?.value,
+            })
+          );
+        }
       }
     }
   };
@@ -88,8 +114,6 @@ const Register = () => {
   const onChangeAddress: any = (address: any) => {
     setLocation(address?.label);
     setAddress(address);
-
-    console.log(address);
 
     setKey("AIzaSyDnogG0wcavOEE8_BkXdzq6fiaBBEQ5GYQ");
 
@@ -176,7 +200,7 @@ const Register = () => {
             name="role"
             rules={[{ required: true, message: "Please input!" }]}
           >
-            <Select
+            <AntSelect
               options={[
                 { value: "Tenant", label: "Tenant" },
                 { value: "Landlord", label: "Landlord" },
@@ -222,6 +246,18 @@ const Register = () => {
                 rules={[{ required: true, message: "Please input!" }]}
               >
                 <Input />
+              </Form.Item>
+            </>
+          )}
+
+          {role === "Tenant" && (
+            <>
+              <Form.Item label="Select your landlord" name="landlord_id">
+                <Select
+                  value={landlord_id}
+                  onChange={(option) => handleLandlordChange(option)}
+                  options={formattedData}
+                />
               </Form.Item>
             </>
           )}

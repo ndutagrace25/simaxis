@@ -21,6 +21,16 @@ export interface Customer {
     email: string;
   };
   action?: ReactElement;
+  building_name?: string;
+}
+
+export interface Landlord {
+  id: string;
+  first_name: string;
+  middle_name: string;
+  last_name: string;
+  location: string;
+  building_name: string;
 }
 
 interface VeryfyCustomerResponse {
@@ -38,6 +48,9 @@ interface CustomerState {
   updatedCustomer: VeryfyCustomerResponse;
   updatingCustomer: boolean;
   updatingCustomerError: string | null;
+  landlords: Landlord[];
+  landlordsError: string | null;
+  loadingLandlords: boolean;
 }
 
 const initialState: CustomerState = {
@@ -50,6 +63,9 @@ const initialState: CustomerState = {
   updatedCustomer: {},
   updatingCustomer: false,
   updatingCustomerError: null,
+  landlords: [],
+  landlordsError: null,
+  loadingLandlords: false,
 };
 
 const authSlice = createSlice({
@@ -86,6 +102,16 @@ const authSlice = createSlice({
     setUpdatingCustomer(state, action: PayloadAction<boolean>) {
       state.updatingCustomer = action.payload;
     },
+    // LANDLORDS
+    setLandlords(state, action: PayloadAction<Landlord[]>) {
+      state.landlords = action.payload;
+    },
+    setLandlordsError(state, action: PayloadAction<string | null>) {
+      state.landlordsError = action.payload;
+    },
+    setLoadingLandlords(state, action: PayloadAction<boolean>) {
+      state.loadingLandlords = action.payload;
+    },
   },
 });
 
@@ -102,6 +128,10 @@ export const {
   setUpdateCustomer,
   setUpdateCustomerError,
   setUpdatingCustomer,
+  // landlords
+  setLandlords,
+  setLandlordsError,
+  setLoadingLandlords,
 } = authSlice.actions;
 
 export default authSlice.reducer;
@@ -176,3 +206,25 @@ export const updateCustomer =
       dispatch(setUpdatingCustomer(false));
     }
   };
+
+export const getLandlords = (): AppThunk => async (dispatch) => {
+  dispatch(setLoadingLandlords(true));
+  try {
+    const response = await axiosInstance.get(`/landlord`);
+
+    dispatch(setLandlords(response.data.landlords));
+  } catch (error: any) {
+    Swal.fire(
+      "Error",
+      error?.response?.data ? error.response.data.message : error.message,
+      "error"
+    );
+    dispatch(
+      setLandlordsError(
+        error?.response?.data ? error.response.data.message : error.message
+      )
+    );
+  } finally {
+    dispatch(setLoadingLandlords(false));
+  }
+};

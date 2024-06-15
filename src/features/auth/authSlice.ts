@@ -35,6 +35,7 @@ export interface RegistrationDetails {
   building_name?: string | undefined;
   lat?: any | undefined;
   long?: any | undefined;
+  landlord_id?: any | undefined;
 }
 
 interface RegistrationResponse {
