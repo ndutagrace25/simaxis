@@ -59,25 +59,29 @@ const Register = () => {
     if (values.password !== values.confirm_password) {
       Swal.fire("Error", "Password didn't match!", "error");
     } else {
-      dispatch(
-        registerUser({
-          username: values.username,
-          phone: values.phone,
-          email: values.email,
-          role: values.role,
-          password: values.password,
-          first_name: values.first_name,
-          middle_name: values.middle_name,
-          last_name: values.last_name,
-          location,
-          lat,
-          long,
-          national_id: values.national_id,
-          building_name: values.building_name,
-          plot_number: values.plot_number,
-          meter_number: values.meter_number,
-        })
-      );
+      if (values.role === "Landlord" && !location) {
+        Swal.fire("Error", "Please select a location", "error");
+      } else {
+        dispatch(
+          registerUser({
+            username: values.username,
+            phone: values.phone,
+            email: values.email,
+            role: values.role,
+            password: values.password,
+            first_name: values.first_name,
+            middle_name: values.middle_name,
+            last_name: values.last_name,
+            location,
+            lat,
+            long,
+            national_id: values.national_id,
+            building_name: values.building_name,
+            plot_number: values.plot_number,
+            meter_number: values.meter_number,
+          })
+        );
+      }
     }
   };
 
@@ -184,18 +188,11 @@ const Register = () => {
 
           {role === "Landlord" && (
             <>
-              {/* <Form.Item
-                label="Location"
-                name="location"
-                rules={[{ required: true, message: "Please input!" }]}
-              >
-                <Input />
-              </Form.Item> */}
               <Form.Item
                 className=""
                 label="Location"
                 name="location"
-                rules={[{ required: true, message: "Please input!" }]}
+                rules={[{ required: false, message: "Please input!" }]}
               >
                 <GooglePlacesAutocomplete
                   apiKey={"AIzaSyDnogG0wcavOEE8_BkXdzq6fiaBBEQ5GYQ"}
