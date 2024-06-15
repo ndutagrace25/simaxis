@@ -32,6 +32,7 @@ export interface RegistrationDetails {
   national_id: number | undefined;
   plot_number: string | undefined;
   meter_number?: number | undefined;
+  building_name?: string | undefined;
 }
 
 interface RegistrationResponse {

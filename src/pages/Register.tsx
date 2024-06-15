@@ -37,6 +37,7 @@ type FieldType = {
   meter_number?: number;
   location?: string;
   plot_number?: string;
+  building_name?: string;
   password?: string;
   confirm_password?: string;
 };
@@ -64,6 +65,7 @@ const Register = () => {
           last_name: values.last_name,
           location: values.location,
           national_id: values.national_id,
+          building_name: values.building_name,
           plot_number: values.plot_number,
           meter_number: values.meter_number,
         })
@@ -150,20 +152,19 @@ const Register = () => {
               onChange={setUserType}
             />
           </Form.Item>
-          {/* {role === "Tenant" && (
-            <Form.Item
-              label="Meter number"
-              name="meter_number"
-              rules={[{ required: true, message: "Please input!" }]}
-            >
-              <InputNumber style={{ width: "100%" }} />
-            </Form.Item>
-          )} */}
+
           {role === "Landlord" && (
             <>
               <Form.Item
                 label="Building Location"
                 name="location"
+                rules={[{ required: true, message: "Please input!" }]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                label="Building Name"
+                name="building_name"
                 rules={[{ required: true, message: "Please input!" }]}
               >
                 <Input />
