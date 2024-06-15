@@ -33,6 +33,8 @@ export interface RegistrationDetails {
   plot_number: string | undefined;
   meter_number?: number | undefined;
   building_name?: string | undefined;
+  lat?: any | undefined;
+  long?: any | undefined;
 }
 
 interface RegistrationResponse {

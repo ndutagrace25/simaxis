@@ -1,3 +1,4 @@
+import { AppDispatch, RootState } from "../store";
 import {
   Button,
   Form,
@@ -7,12 +8,13 @@ import {
   type FormProps,
   Spin,
 } from "antd";
-import { useState } from "react";
+import { setKey, fromAddress } from "react-geocode";
+import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import { NavBar, NavDetails } from "../common";
+import { registerUser } from "../features/auth/authSlice";
 import Swal from "sweetalert2";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../store";
-import { registerUser } from "../features/auth/authSlice";
+import { useState } from "react";
 
 const formItemLayout = {
   labelCol: {
@@ -45,6 +47,10 @@ type FieldType = {
 const Register = () => {
   const [role, setUserType] = useState("");
   const dispatch = useDispatch<AppDispatch>();
+  const [address, setAddress] = useState<any>(null);
+  const [location, setLocation] = useState<any>(null);
+  const [lat, setLat] = useState<any>(null);
+  const [long, setLong] = useState<any>(null);
 
   const { loadingRegistration } = useSelector((state: RootState) => state.auth);
 
@@ -63,7 +69,9 @@ const Register = () => {
           first_name: values.first_name,
           middle_name: values.middle_name,
           last_name: values.last_name,
-          location: values.location,
+          location,
+          lat,
+          long,
           national_id: values.national_id,
           building_name: values.building_name,
           plot_number: values.plot_number,
@@ -71,6 +79,27 @@ const Register = () => {
         })
       );
     }
+  };
+
+  const onChangeAddress: any = (address: any) => {
+    setLocation(address?.label);
+    setAddress(address);
+
+    console.log(address);
+
+    setKey("AIzaSyDnogG0wcavOEE8_BkXdzq6fiaBBEQ5GYQ");
+
+    // get lat and lon of the address
+    fromAddress(address?.label).then(
+      (response: any) => {
+        const { lat, lng } = response?.results[0].geometry.location;
+        setLat(lat);
+        setLong(lng);
+      },
+      (error: any) => {
+        console.error(error);
+      }
+    );
   };
 
   return (
@@ -155,12 +184,33 @@ const Register = () => {
 
           {role === "Landlord" && (
             <>
-              <Form.Item
-                label="Building Location"
+              {/* <Form.Item
+                label="Location"
                 name="location"
                 rules={[{ required: true, message: "Please input!" }]}
               >
                 <Input />
+              </Form.Item> */}
+              <Form.Item
+                className=""
+                label="Location"
+                name="location"
+                rules={[{ required: true, message: "Please input!" }]}
+              >
+                <GooglePlacesAutocomplete
+                  apiKey={"AIzaSyDnogG0wcavOEE8_BkXdzq6fiaBBEQ5GYQ"}
+                  apiOptions={{ region: "ke" }}
+                  autocompletionRequest={{
+                    componentRestrictions: {
+                      country: ["ke"],
+                    },
+                  }}
+                  selectProps={{
+                    value: address,
+                    onChange: onChangeAddress,
+                    className: "text-black rounded mt-2",
+                  }}
+                />
               </Form.Item>
               <Form.Item
                 label="Building Name"
