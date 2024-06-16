@@ -2,6 +2,7 @@ import { Tabs } from "antd";
 import type { TabsProps } from "antd";
 import { AllCustomers } from "./customers";
 import { AllMeters } from "./meters";
+import { AllTenants } from "./tenants";
 
 const AdminTabs = () => {
   const onChange = (key: string) => {
@@ -25,7 +26,7 @@ const AdminTabs = () => {
     {
       key: "3",
       label: "Tenants",
-      children: "Tenants",
+      children: <AllTenants />,
     },
     {
       key: "4",

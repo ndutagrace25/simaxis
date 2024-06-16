@@ -65,7 +65,7 @@ const initialState: MeterState = {
   syncedMeterToStronError: null,
 };
 
-const authSlice = createSlice({
+const meterSlice = createSlice({
   name: "meter",
   initialState,
   reducers: {
@@ -143,9 +143,9 @@ export const {
   setSyncMeter,
   setSyncMeterError,
   setSyncingMeter,
-} = authSlice.actions;
+} = meterSlice.actions;
 
-export default authSlice.reducer;
+export default meterSlice.reducer;
 
 export const getMeters = (): AppThunk => async (dispatch) => {
   dispatch(setLoadingMeters(true));

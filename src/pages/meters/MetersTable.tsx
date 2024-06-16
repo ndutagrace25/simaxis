@@ -30,15 +30,11 @@ const MetersTable = () => {
       ),
       action: (
         <>
-          {!item.is_synced_to_stron ? (
-            <>
-              <UpdateMeter
-                id={item.id}
-                meter_number={`${item.county_number}-${item.serial_number}`}
-                is_synced_to_stron={item.is_synced_to_stron}
-              />
-            </>
-          ) : null}
+          <UpdateMeter
+            id={item.id}
+            meter_number={`${item.county_number}-${item.serial_number}`}
+            is_synced_to_stron={item.is_synced_to_stron}
+          />
         </>
       ),
     };
