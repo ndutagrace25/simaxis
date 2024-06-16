@@ -1,0 +1,80 @@
+import { useState } from "react";
+import { Button, Modal, Spin } from "antd";
+import { IconPencil } from "@tabler/icons-react";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../store";
+
+import { syncMeter } from "../../features/meter/meterSlice";
+
+const UpdateMeter = ({
+  meter_number,
+  is_synced_to_stron,
+  id,
+}: {
+  meter_number: string;
+  is_synced_to_stron: any;
+  id: string;
+}) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { syncingMeterToStron } = useSelector(
+    (state: RootState) => state.meter
+  );
+  const dispatch = useDispatch<AppDispatch>();
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  return (
+    <>
+      <IconPencil
+        type="primary"
+        onClick={showModal}
+        width={16}
+        className="cursor text-primary"
+      />
+      <Modal
+        title={`Update meter ${meter_number} details`}
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        cancelText="Close"
+        width={800}
+        okButtonProps={{
+          style: { display: "none" },
+          className: "hide-onPrint",
+        }}
+      >
+        <div className="d-flex justify-content-between">
+          {!is_synced_to_stron && (
+            <>
+              {syncingMeterToStron ? (
+                <Spin />
+              ) : (
+                <Button
+                  className="bg-success text-white my-3"
+                  size="small"
+                  onClick={() => {
+                    dispatch(syncMeter({ id }));
+                  }}
+                >
+                  Forward to Stron
+                </Button>
+              )}
+            </>
+          )}
+        </div>
+      </Modal>
+    </>
+  );
+};
+
+export default UpdateMeter;

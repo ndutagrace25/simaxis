@@ -69,7 +69,7 @@ const initialState: CustomerState = {
 };
 
 const authSlice = createSlice({
-  name: "auth",
+  name: "customer",
   initialState,
   reducers: {
     // CUSTOMERS
