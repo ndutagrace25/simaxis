@@ -10,7 +10,7 @@ const AdminTabs = () => {
   const items: TabsProps["items"] = [
     {
       key: "1",
-      label: "Customers",
+      label: "Agents/Landlords",
       children: (
         <>
           <AllCustomers />
@@ -24,16 +24,21 @@ const AdminTabs = () => {
     },
     {
       key: "3",
+      label: "Tenants",
+      children: "Tenants",
+    },
+    {
+      key: "4",
       label: "Customer Meters",
       children: "Customer meters",
     },
     {
-      key: "4",
+      key: "5",
       label: "Payments",
       children: "Payments",
     },
     {
-      key: "5",
+      key: "6",
       label: "Tokens",
       children: "Tokens",
     },
