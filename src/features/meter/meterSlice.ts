@@ -13,6 +13,10 @@ export interface Meter {
   created_at: string;
   action?: string | ReactElement;
   MeterType: { name: string };
+  CustomerMeter?: {
+    id?: string;
+    meter_id?: string;
+  };
 }
 
 export interface MeterType {
@@ -45,6 +49,9 @@ interface MeterState {
   syncingMeterToStron: boolean;
   syncedMeterToStron: AddMeterResponse;
   syncedMeterToStronError: string | null;
+  syncedMeters: Meter[];
+  syncedMetersError: string | null;
+  loadingSyncedMeters: boolean;
 }
 
 const initialState: MeterState = {
@@ -63,6 +70,9 @@ const initialState: MeterState = {
   syncingMeterToStron: false,
   syncedMeterToStron: {},
   syncedMeterToStronError: null,
+  syncedMeters: [],
+  syncedMetersError: null,
+  loadingSyncedMeters: false,
 };
 
 const meterSlice = createSlice({
@@ -119,6 +129,16 @@ const meterSlice = createSlice({
     setSyncingMeter(state, action: PayloadAction<boolean>) {
       state.syncingMeterToStron = action.payload;
     },
+    // SYNCED METERS
+    setSyncedMeters(state, action: PayloadAction<Meter[]>) {
+      state.syncedMeters = action.payload;
+    },
+    setSyncedMetersError(state, action: PayloadAction<string | null>) {
+      state.syncedMetersError = action.payload;
+    },
+    setLoadingSyncedMeters(state, action: PayloadAction<boolean>) {
+      state.loadingSyncedMeters = action.payload;
+    },
   },
 });
 
@@ -143,6 +163,10 @@ export const {
   setSyncMeter,
   setSyncMeterError,
   setSyncingMeter,
+  // synced meters
+  setSyncedMeters,
+  setSyncedMetersError,
+  setLoadingSyncedMeters
 } = meterSlice.actions;
 
 export default meterSlice.reducer;
@@ -262,5 +286,27 @@ export const syncMeter =
       );
     } finally {
       dispatch(setSyncingMeter(false));
+    }
+  };
+
+  export const getSyncedMeters = (): AppThunk => async (dispatch) => {
+    dispatch(setLoadingSyncedMeters(true));
+    try {
+      const response = await axiosInstance.get(`/meter/synced/customer`);
+  
+      dispatch(setSyncedMeters(response.data.synced_meters));
+    } catch (error: any) {
+      Swal.fire(
+        "Error",
+        error?.response?.data ? error.response.data.message : error.message,
+        "error"
+      );
+      dispatch(
+        setSyncedMetersError(
+          error?.response?.data ? error.response.data.message : error.message
+        )
+      );
+    } finally {
+      dispatch(setLoadingSyncedMeters(false));
     }
   };

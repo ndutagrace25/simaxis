@@ -5,6 +5,10 @@
   text-align: center;
 }
 
+.swal2-container {
+  z-index: X;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;

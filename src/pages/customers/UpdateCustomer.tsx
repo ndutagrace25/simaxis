@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Modal, Spin } from "antd";
 import { IconPencil } from "@tabler/icons-react";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,6 +7,8 @@ import {
   updateCustomer,
   verifyCustomer,
 } from "../../features/customer/customerSlice";
+import { AttachMeter } from ".";
+import { getSyncedMeters } from "../../features/meter/meterSlice";
 
 const UpdateCustomer = ({
   customer_name,
@@ -24,6 +26,10 @@ const UpdateCustomer = ({
     (state: RootState) => state.customer
   );
   const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(getSyncedMeters());
+  }, []);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -58,9 +64,13 @@ const UpdateCustomer = ({
         }}
       >
         <div className="d-flex justify-content-between">
-          <Button size="small" type="primary" className="my-3">
-            Attach meter to customer
-          </Button>
+          {is_verified && is_synced_to_stron ? (
+            <AttachMeter customer_name={customer_name} customer_id={id}/>
+          ) : (
+            <span className="my-3">
+              User needs to be verified and forwarded to Stron
+            </span>
+          )}
           {!is_verified && (
             <Button
               size="small"

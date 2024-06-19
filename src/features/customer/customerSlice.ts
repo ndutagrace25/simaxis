@@ -51,6 +51,9 @@ interface CustomerState {
   landlords: Landlord[];
   landlordsError: string | null;
   loadingLandlords: boolean;
+  attachedMeter: VeryfyCustomerResponse;
+  attachingMeter: boolean;
+  attachingMeterError: string | null;
 }
 
 const initialState: CustomerState = {
@@ -66,6 +69,9 @@ const initialState: CustomerState = {
   landlords: [],
   landlordsError: null,
   loadingLandlords: false,
+  attachedMeter: {},
+  attachingMeter: false,
+  attachingMeterError: null,
 };
 
 const authSlice = createSlice({
@@ -112,6 +118,16 @@ const authSlice = createSlice({
     setLoadingLandlords(state, action: PayloadAction<boolean>) {
       state.loadingLandlords = action.payload;
     },
+    // ATTACH METER
+    setAttachMeter(state, action: PayloadAction<VeryfyCustomerResponse>) {
+      state.attachedMeter = action.payload;
+    },
+    setAttachingMeterError(state, action: PayloadAction<string | null>) {
+      state.attachingMeterError = action.payload;
+    },
+    setAttachingMeter(state, action: PayloadAction<boolean>) {
+      state.attachingMeter = action.payload;
+    },
   },
 });
 
@@ -132,6 +148,10 @@ export const {
   setLandlords,
   setLandlordsError,
   setLoadingLandlords,
+  // attach meter to customer
+  setAttachMeter,
+  setAttachingMeterError,
+  setAttachingMeter,
 } = authSlice.actions;
 
 export default authSlice.reducer;
@@ -228,3 +248,29 @@ export const getLandlords = (): AppThunk => async (dispatch) => {
     dispatch(setLoadingLandlords(false));
   }
 };
+
+export const attachMeterToCustomer =
+  (payload: { customer_id: string; meter_id: string }): AppThunk =>
+  async (dispatch) => {
+    dispatch(setAttachingMeter(true));
+    try {
+      const response = await axiosInstance.post(
+        `/customer/attach/meter`,
+        payload
+      );
+      Swal.fire("Success", response.data.message, "success");
+    } catch (error: any) {
+      Swal.fire(
+        "Error",
+        error?.response?.data ? error.response.data.message : error.message,
+        "error"
+      );
+      dispatch(
+        setAttachingMeterError(
+          error?.response?.data ? error.response.data.message : error.message
+        )
+      );
+    } finally {
+      dispatch(setAttachingMeter(false));
+    }
+  };
