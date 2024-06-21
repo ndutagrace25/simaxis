@@ -16,7 +16,9 @@ const MetersTable = () => {
       ...item,
       created_at: moment(item.created_at).format("MM/DD/YYYY"),
       type: item.MeterType.name,
-      serial_number: `${item.county_number}-${item.serial_number}`,
+      serial_number: `${
+        item.county_number.toString().length === 1 ? "C00" : "C0"
+      }${item.county_number}-${item.serial_number}`,
       is_synced_to_stron: (
         <>
           {!item.is_synced_to_stron ? (
