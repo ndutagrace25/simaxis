@@ -7,6 +7,7 @@ import {
 import moment from "moment";
 import { useEffect } from "react";
 import { Spin, Table } from "antd";
+import { UpdateCustomerMeter } from ".";
 
 const CustomerMetersTable = () => {
   const { customerMeters, loadingCustomerMeters } = useSelector(
@@ -25,6 +26,22 @@ const CustomerMetersTable = () => {
       tenant: item?.Tenant?.first_name
         ? `${item?.Tenant?.first_name} ${item?.Tenant?.last_name}`
         : "N/A",
+      is_synced_to_stron: item.is_synced_to_stron ? (
+        <span className="text-success">Forwarded</span>
+      ) : (
+        <span className="text-danger">Not Forwarded</span>
+      ),
+      action: (
+        <>
+          <UpdateCustomerMeter
+            id={item.id}
+            is_synced_to_stron={item.is_synced_to_stron}
+            CUST_ID={item?.Customer?.customer_number}
+            Account_ID={item?.account_id}
+            METER_ID={item?.Meter?.serial_number}
+          />
+        </>
+      ),
     };
   });
 
@@ -45,9 +62,19 @@ const CustomerMetersTable = () => {
       key: "tenant",
     },
     {
+      title: "Is Forwarded",
+      dataIndex: "is_synced_to_stron",
+      key: "is_synced_to_stron",
+    },
+    {
       title: "Date Created",
       dataIndex: "created_at",
       key: "created_at",
+    },
+    {
+      title: "Action",
+      dataIndex: "action",
+      key: "action",
     },
   ];
 

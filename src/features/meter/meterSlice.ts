@@ -23,14 +23,15 @@ export interface CustomerMeter {
   id: string;
   customer_id: string;
   meter_id: string;
-  is_synced_to_stron: boolean;
-  account_id: number;
+  is_synced_to_stron: boolean | ReactElement;
+  account_id: string;
   created_at: string;
   tenant_id: string;
   Customer: {
     first_name: string;
     middle_name: string;
     last_name: string;
+    customer_number: string;
   };
   Tenant: {
     first_name: string;
@@ -40,6 +41,7 @@ export interface CustomerMeter {
     serial_number: string;
     county_number: number;
   };
+  action?: any;
 }
 
 export interface MeterType {
@@ -78,6 +80,9 @@ interface MeterState {
   customerMeters: CustomerMeter[];
   customerMetersError: string | null;
   loadingCustomerMeters: boolean;
+  syncingCustomerMeterToStron: boolean;
+  syncedCustomerMeterToStron: AddMeterResponse;
+  syncedCustomerMeterToStronError: string | null;
 }
 
 const initialState: MeterState = {
@@ -102,6 +107,9 @@ const initialState: MeterState = {
   customerMeters: [],
   customerMetersError: null,
   loadingCustomerMeters: false,
+  syncingCustomerMeterToStron: false,
+  syncedCustomerMeterToStron: {},
+  syncedCustomerMeterToStronError: null,
 };
 
 const meterSlice = createSlice({
@@ -178,6 +186,16 @@ const meterSlice = createSlice({
     setLoadingCustomerMeters(state, action: PayloadAction<boolean>) {
       state.loadingCustomerMeters = action.payload;
     },
+    // SYNCING CUSTOMER METER ACCOUNT TO STRON
+    setSyncCustomerMeters(state, action: PayloadAction<AddMeterResponse>) {
+      state.syncedCustomerMeterToStron = action.payload;
+    },
+    setSyncCustomerMetersError(state, action: PayloadAction<string | null>) {
+      state.syncedCustomerMeterToStronError = action.payload;
+    },
+    setSyncingCustomerMeters(state, action: PayloadAction<boolean>) {
+      state.syncingCustomerMeterToStron = action.payload;
+    },
   },
 });
 
@@ -210,6 +228,10 @@ export const {
   setCustomerMeters,
   setCustomerMetersError,
   setLoadingCustomerMeters,
+  // syncing customer meters to stron
+  setSyncCustomerMeters,
+  setSyncCustomerMetersError,
+  setSyncingCustomerMeters,
 } = meterSlice.actions;
 
 export default meterSlice.reducer;
@@ -375,3 +397,35 @@ export const getCustomerMeters = (): AppThunk => async (dispatch) => {
     dispatch(setLoadingCustomerMeters(false));
   }
 };
+
+export const syncCustomerMeter =
+  (payload: {
+    id: string;
+    Account_ID: string;
+    CUST_ID: string;
+    METER_ID: string;
+  }): AppThunk =>
+  async (dispatch) => {
+    dispatch(setSyncingCustomerMeters(true));
+    try {
+      const response = await axiosInstance.post(
+        `/customer-meter/stron`,
+        payload
+      );
+      Swal.fire("Success", response.data.message, "success");
+      dispatch(setSyncCustomerMeters(response.data));
+    } catch (error: any) {
+      Swal.fire(
+        "Error",
+        error?.response?.data ? error.response.data.message : error.message,
+        "error"
+      );
+      dispatch(
+        setSyncingCustomerMeters(
+          error?.response?.data ? error.response.data.message : error.message
+        )
+      );
+    } finally {
+      dispatch(setSyncingCustomerMeters(false));
+    }
+  };
