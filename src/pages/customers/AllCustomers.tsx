@@ -17,8 +17,8 @@ const AllCustomers = () => {
   const dataSource = customers.map((item: Customer) => {
     return {
       ...item,
-      phone: item.User.phone,
-      email: item.User.email,
+      phone: item.User?.phone,
+      email: item.User?.email,
       created_at: moment(item.created_at).format("MM/DD/YYYY"),
       name: `${item.first_name} ${item.middle_name} ${item.last_name}`,
       is_verified: (
@@ -106,7 +106,6 @@ const AllCustomers = () => {
 
   useEffect(
     () => {
-      console.log(token, "user?.id");
       // @ts-ignore
       if (Object.keys(user).length > 0 && token) {
         dispatch(getCustomers());
