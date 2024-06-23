@@ -68,7 +68,12 @@ const UpdateCustomerMeter = ({
                   size="small"
                   onClick={() => {
                     dispatch(
-                      syncCustomerMeter({ id, Account_ID, CUST_ID, METER_ID })
+                      syncCustomerMeter({
+                        id,
+                        Account_ID: `AC-${Account_ID}`,
+                        CUST_ID: `CST-${CUST_ID}`,
+                        METER_ID,
+                      })
                     );
                   }}
                 >
