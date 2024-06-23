@@ -71,7 +71,7 @@ const UpdateCustomerMeter = ({
                       syncCustomerMeter({
                         id,
                         Account_ID: `AC-${Account_ID}`,
-                        CUST_ID: `CST-${CUST_ID}`,
+                        CUST_ID: `CTS-${CUST_ID}`,
                         METER_ID,
                       })
                     );
