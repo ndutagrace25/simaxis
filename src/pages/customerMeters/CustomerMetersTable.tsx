@@ -10,9 +10,8 @@ import { Spin, Table } from "antd";
 import { UpdateCustomerMeter } from ".";
 
 const CustomerMetersTable = () => {
-  const { customerMeters, loadingCustomerMeters } = useSelector(
-    (state: RootState) => state.meter
-  );
+  const { customerMeters, loadingCustomerMeters, syncingCustomerMeterToStron } =
+    useSelector((state: RootState) => state.meter);
   const dispatch = useDispatch<AppDispatch>();
 
   const dataSource = customerMeters.map((item: CustomerMeter) => {
@@ -80,7 +79,7 @@ const CustomerMetersTable = () => {
 
   useEffect(() => {
     dispatch(getCustomerMeters());
-  }, []);
+  }, [syncingCustomerMeterToStron]);
 
   return (
     <div className="mt-3">
