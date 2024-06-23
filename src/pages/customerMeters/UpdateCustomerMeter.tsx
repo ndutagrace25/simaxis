@@ -13,11 +13,11 @@ const UpdateCustomerMeter = ({
   CUST_ID,
   Account_ID,
 }: {
-  METER_ID: string;
+  METER_ID: string | undefined;
   is_synced_to_stron: any;
-  id: string;
-  CUST_ID: string;
-  Account_ID: string;
+  id: string | undefined;
+  CUST_ID: string | undefined;
+  Account_ID: string | undefined;
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { syncingCustomerMeterToStron } = useSelector(

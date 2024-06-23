@@ -5,10 +5,33 @@ import { isMobile } from "react-device-detect";
 import { useNavigate } from "react-router-dom";
 import { appSession } from "../utils/appStorage";
 import { AdminTabs } from ".";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../store";
+import {
+  getLandlordMeters,
+  getTenantMeters,
+} from "../features/meter/meterSlice";
+import { getLandlordTenants } from "../features/customer/customerSlice";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const user = appSession.getUser();
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { updatingCustomerMeter } = useSelector(
+    (state: RootState) => state.meter
+  );
+
+  useEffect(() => {
+    if (user?.role === "Landlord") {
+      dispatch(getLandlordMeters({ id: user?.customer_id }));
+      dispatch(getLandlordTenants(user?.customer_id));
+    }
+    if (user?.role === "Tenant") {
+      dispatch(getTenantMeters({ id: user?.customer_id }));
+    }
+  }, [updatingCustomerMeter]);
 
   return (
     <>

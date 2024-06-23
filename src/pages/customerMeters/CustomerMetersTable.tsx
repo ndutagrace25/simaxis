@@ -21,7 +21,7 @@ const CustomerMetersTable = () => {
       created_at: moment(item.created_at).format("MM/DD/YYYY"),
       landlord: `${item?.Customer?.first_name} ${item?.Customer?.last_name}`,
       serial_number: `${
-        item?.Meter?.county_number.toString().length === 1 ? "C00" : "C0"
+        item?.Meter?.county_number?.toString().length === 1 ? "C00" : "C0"
       }${item?.Meter?.county_number}-${item?.Meter?.serial_number}`,
       tenant: item?.Tenant?.first_name
         ? `${item?.Tenant?.first_name} ${item?.Tenant?.last_name}`

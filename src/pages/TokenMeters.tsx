@@ -1,10 +1,31 @@
-import { Select } from "antd";
-import { useState } from "react";
+import { Select, Spin } from "antd";
+import { useEffect, useState } from "react";
 import { MeterCard } from "../common";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../store";
+import { CustomerMeter, getLandlordMeters } from "../features/meter/meterSlice";
+import { appSession } from "../utils/appStorage";
 
 const TokenMeters = () => {
-  const [token_meter, setTokenMeter] = useState<string | null>(null);
+  const [token_meter, setTokenMeter] = useState<string | undefined>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+
+  const user = appSession.getUser();
+
+  useEffect(() => {
+    dispatch(
+      getLandlordMeters({ id: user?.customer_id, serial_number: token_meter })
+    );
+  }, [token_meter]);
+
+  const {
+    landlordMeters,
+    loadingLandlordMeters,
+    loadingTenantMeter,
+    tenantMeter,
+    updatingCustomerMeter,
+  } = useSelector((state: RootState) => state.meter);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -18,37 +39,27 @@ const TokenMeters = () => {
     setIsModalOpen(false);
   };
 
-  const tokenMeters = [
-    {
-      device_status: "Active",
-      meter_number: "37185698745",
-      latest_token: "1475-0553-400-5370-9209",
-    },
-    {
-      device_status: "Inactive",
-      meter_number: "37185698846",
-      latest_token: "1675-0553-400-5370-9209",
-    },
-    {
-      device_status: "Active",
-      meter_number: "37185698999",
-      latest_token: "1575-0553-400-5370-9209",
-    },
-  ];
+  const metersToFilter = landlordMeters.map((item: any) => {
+    return {
+      value: item?.Meter?.serial_number,
+      label: item?.Meter?.serial_number,
+    };
+  });
 
-  let displayAllMeters = tokenMeters.map((item: any, key: any) => (
-    <div key={key}>
-      <MeterCard
-        device_status={item.device_status}
-        meter_number={item.meter_number}
-        latest_token={item.latest_token}
-        isModalOpen={isModalOpen}
-        handleOk={handleOk}
-        handleCancel={handleCancel}
-        showModal={showModal}
-      />
-    </div>
-  ));
+  const tokenMeters = landlordMeters.map((item: CustomerMeter) => {
+    return {
+      device_status:
+        item?.Meter?.is_synced_to_stron && item?.is_synced_to_stron
+          ? "Active"
+          : "Deactivated",
+      meter_number: item?.Meter?.serial_number,
+      latest_token: item?.Meter?.MeterTokens[0]?.token,
+      tenant: item?.Tenant
+        ? `${item?.Tenant?.first_name} ${item?.Tenant?.last_name}`
+        : "",
+      customer_meter_id: item.id,
+    };
+  });
 
   const onChange = (value: string) => {
     console.log(`selected ${value}`);
@@ -66,49 +77,77 @@ const TokenMeters = () => {
 
   return (
     <div className="px-3">
-      <div className="mt-2 mb-3">
-        <Select
-          showSearch
-          placeholder="Select token meter"
-          optionFilterProp="children"
-          onChange={onChange}
-          value={token_meter}
-          onSearch={onSearch}
-          filterOption={filterOption}
-          className="col-12"
-          options={[
-            {
-              value: "37185698745",
-              label: "37185698745",
-            },
-            {
-              value: "37185698846",
-              label: "37185698846",
-            },
-            {
-              value: "37185698999",
-              label: "37185698999",
-            },
-          ]}
-        />
-      </div>
-      {!token_meter
-        ? displayAllMeters
-        : tokenMeters
-            .filter((itm: any) => itm.meter_number === token_meter)
-            .map((item: any, key: any) => (
-              <div key={key}>
-                <MeterCard
-                  device_status={item.device_status}
-                  meter_number={item.meter_number}
-                  latest_token={item.latest_token}
-                  isModalOpen={isModalOpen}
-                  handleOk={handleOk}
-                  handleCancel={handleCancel}
-                  showModal={showModal}
-                />
-              </div>
-            ))}
+      {user?.role === "Landlord" && (
+        <div className="mt-2 mb-3">
+          <Select
+            showSearch
+            placeholder="Select token meter"
+            optionFilterProp="children"
+            onChange={onChange}
+            value={token_meter}
+            onSearch={onSearch}
+            filterOption={filterOption}
+            className="col-12"
+            options={metersToFilter}
+          />
+        </div>
+      )}
+
+      {loadingLandlordMeters || updatingCustomerMeter || loadingTenantMeter ? (
+        <Spin />
+      ) : (
+        <>
+          <>
+            {user?.role === "Landlord" &&
+              (tokenMeters.length > 0
+                ? tokenMeters.map((item: any, key: any) => (
+                    <div key={key}>
+                      <MeterCard
+                        device_status={item.device_status}
+                        meter_number={item.meter_number}
+                        latest_token={item.latest_token}
+                        isModalOpen={isModalOpen}
+                        handleOk={handleOk}
+                        handleCancel={handleCancel}
+                        showModal={showModal}
+                        tenant={item.tenant}
+                        customer_meter_id={item.customer_meter_id}
+                      />
+                    </div>
+                  ))
+                : "There are no meters attached to you")}
+          </>
+          <>
+            {user?.role === "Tenant" &&
+              (tenantMeter ? (
+                <div>
+                  <MeterCard
+                    device_status={
+                      tenantMeter?.Meter?.is_synced_to_stron &&
+                      tenantMeter?.is_synced_to_stron
+                        ? "Active"
+                        : "Deactivated"
+                    }
+                    meter_number={tenantMeter?.Meter?.serial_number}
+                    latest_token={tenantMeter?.Meter?.MeterTokens[0]?.token}
+                    isModalOpen={isModalOpen}
+                    handleOk={handleOk}
+                    handleCancel={handleCancel}
+                    showModal={showModal}
+                    tenant={
+                      tenantMeter?.Tenant
+                        ? `${tenantMeter?.Tenant?.first_name} ${tenantMeter?.Tenant?.last_name}`
+                        : ""
+                    }
+                    customer_meter_id={tenantMeter.id}
+                  />
+                </div>
+              ) : (
+                "There is no meter attached to you"
+              ))}
+          </>
+        </>
+      )}
     </div>
   );
 };

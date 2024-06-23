@@ -10,6 +10,7 @@ export interface User {
   last_name: string;
   is_verified: boolean;
   role: string;
+  customer_id: string;
 }
 
 interface LoginDetails {

@@ -54,6 +54,9 @@ interface CustomerState {
   attachedMeter: VeryfyCustomerResponse;
   attachingMeter: boolean;
   attachingMeterError: string | null;
+  landlord_tenants: Landlord[];
+  landlord_tenantsError: string | null;
+  loadingLandlordTenants: boolean;
 }
 
 const initialState: CustomerState = {
@@ -72,6 +75,9 @@ const initialState: CustomerState = {
   attachedMeter: {},
   attachingMeter: false,
   attachingMeterError: null,
+  landlord_tenants: [],
+  landlord_tenantsError: null,
+  loadingLandlordTenants: false,
 };
 
 const authSlice = createSlice({
@@ -128,6 +134,16 @@ const authSlice = createSlice({
     setAttachingMeter(state, action: PayloadAction<boolean>) {
       state.attachingMeter = action.payload;
     },
+    // LANDLORD TENANTS
+    setLandlordTenants(state, action: PayloadAction<Landlord[]>) {
+      state.landlord_tenants = action.payload;
+    },
+    setLandlordTenantsError(state, action: PayloadAction<string | null>) {
+      state.landlord_tenantsError = action.payload;
+    },
+    setLoadingLandlordTenantsError(state, action: PayloadAction<boolean>) {
+      state.loadingLandlordTenants = action.payload;
+    },
   },
 });
 
@@ -152,6 +168,10 @@ export const {
   setAttachMeter,
   setAttachingMeterError,
   setAttachingMeter,
+  // landlord tenants
+  setLandlordTenants,
+  setLandlordTenantsError,
+  setLoadingLandlordTenantsError,
 } = authSlice.actions;
 
 export default authSlice.reducer;
@@ -272,5 +292,31 @@ export const attachMeterToCustomer =
       );
     } finally {
       dispatch(setAttachingMeter(false));
+    }
+  };
+
+export const getLandlordTenants =
+  (payload: string): AppThunk =>
+  async (dispatch) => {
+    dispatch(setLoadingLandlordTenantsError(true));
+    try {
+      const response = await axiosInstance.get(
+        `customer/landlord/tenants/${payload}`
+      );
+
+      dispatch(setLandlordTenants(response.data.landlord_tenants));
+    } catch (error: any) {
+      Swal.fire(
+        "Error",
+        error?.response?.data ? error.response.data.message : error.message,
+        "error"
+      );
+      dispatch(
+        setLoadingLandlordTenantsError(
+          error?.response?.data ? error.response.data.message : error.message
+        )
+      );
+    } finally {
+      dispatch(setLoadingLandlordTenantsError(false));
     }
   };

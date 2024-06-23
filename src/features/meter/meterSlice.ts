@@ -20,26 +20,28 @@ export interface Meter {
 }
 
 export interface CustomerMeter {
-  id: string;
-  customer_id: string;
-  meter_id: string;
-  is_synced_to_stron: boolean | ReactElement;
-  account_id: string;
-  created_at: string;
-  tenant_id: string;
-  Customer: {
-    first_name: string;
-    middle_name: string;
-    last_name: string;
-    customer_number: string;
+  id?: string;
+  customer_id?: string;
+  meter_id?: string;
+  is_synced_to_stron?: boolean | ReactElement;
+  account_id?: string;
+  created_at?: string;
+  tenant_id?: string;
+  Customer?: {
+    first_name?: string;
+    middle_name?: string;
+    last_name?: string;
+    customer_number?: string;
   };
-  Tenant: {
-    first_name: string;
-    last_name: string;
+  Tenant?: {
+    first_name?: string;
+    last_name?: string;
   };
-  Meter: {
-    serial_number: string;
-    county_number: number;
+  Meter?: {
+    serial_number?: string;
+    county_number?: number;
+    is_synced_to_stron?: boolean;
+    MeterTokens?: any;
   };
   action?: any;
 }
@@ -83,6 +85,15 @@ interface MeterState {
   syncingCustomerMeterToStron: boolean;
   syncedCustomerMeterToStron: AddMeterResponse;
   syncedCustomerMeterToStronError: string | null;
+  landlordMeters: CustomerMeter[];
+  landlordMetersError: string | null;
+  loadingLandlordMeters: boolean;
+  tenantMeter: CustomerMeter;
+  tenantMeterError: string | null;
+  loadingTenantMeter: boolean;
+  updatedCustomerMeter: AddMeterResponse;
+  updatingCustomerMeterError: string | null;
+  updatingCustomerMeter: boolean;
 }
 
 const initialState: MeterState = {
@@ -110,6 +121,15 @@ const initialState: MeterState = {
   syncingCustomerMeterToStron: false,
   syncedCustomerMeterToStron: {},
   syncedCustomerMeterToStronError: null,
+  landlordMeters: [],
+  landlordMetersError: null,
+  loadingLandlordMeters: false,
+  tenantMeter: {},
+  tenantMeterError: null,
+  loadingTenantMeter: false,
+  updatedCustomerMeter: {},
+  updatingCustomerMeterError: null,
+  updatingCustomerMeter: false,
 };
 
 const meterSlice = createSlice({
@@ -196,6 +216,36 @@ const meterSlice = createSlice({
     setSyncingCustomerMeters(state, action: PayloadAction<boolean>) {
       state.syncingCustomerMeterToStron = action.payload;
     },
+    // FETCHING LANDLORDS METERS
+    setGetLandlordMeters(state, action: PayloadAction<CustomerMeter[]>) {
+      state.landlordMeters = action.payload;
+    },
+    setGetLandlordMetersError(state, action: PayloadAction<string | null>) {
+      state.landlordMetersError = action.payload;
+    },
+  setLoadingLandlordMeters(state, action: PayloadAction<boolean>) {
+      state.loadingLandlordMeters = action.payload;
+    },
+    // TENANT METER
+    setGetTenantMeter(state, action: PayloadAction<CustomerMeter>) {
+      state.tenantMeter = action.payload;
+    },
+    setGetTenantMeterError(state, action: PayloadAction<string | null>) {
+      state.tenantMeterError = action.payload;
+    },
+    setLoadingTenantMeter(state, action: PayloadAction<boolean>) {
+      state.loadingTenantMeter = action.payload;
+    },
+    // UPDATE CUSTOMER METER
+    setUpdateCustomerMeter(state, action: PayloadAction<AddMeterResponse>) {
+      state.updatedCustomerMeter = action.payload;
+    },
+    setUpdatingCustomerMeterError(state, action: PayloadAction<string | null>) {
+      state.updatingCustomerMeterError = action.payload;
+    },
+    setUpdatingCustomerMeter(state, action: PayloadAction<boolean>) {
+      state.updatingCustomerMeter = action.payload;
+    },
   },
 });
 
@@ -232,6 +282,18 @@ export const {
   setSyncCustomerMeters,
   setSyncCustomerMetersError,
   setSyncingCustomerMeters,
+  // fetching landlord meters
+  setGetLandlordMeters,
+  setGetLandlordMetersError,
+  setLoadingLandlordMeters,
+  // fetch tenant meter
+  setGetTenantMeter,
+  setGetTenantMeterError,
+  setLoadingTenantMeter,
+  // update customer meter
+  setUpdateCustomerMeter,
+  setUpdatingCustomerMeterError,
+  setUpdatingCustomerMeter,
 } = meterSlice.actions;
 
 export default meterSlice.reducer;
@@ -400,10 +462,10 @@ export const getCustomerMeters = (): AppThunk => async (dispatch) => {
 
 export const syncCustomerMeter =
   (payload: {
-    id: string;
-    Account_ID: string;
-    CUST_ID: string;
-    METER_ID: string;
+    id: string | undefined;
+    Account_ID: string | undefined;
+    CUST_ID: string | undefined;
+    METER_ID: string | undefined;
   }): AppThunk =>
   async (dispatch) => {
     dispatch(setSyncingCustomerMeters(true));
@@ -427,5 +489,92 @@ export const syncCustomerMeter =
       );
     } finally {
       dispatch(setSyncingCustomerMeters(false));
+    }
+  };
+
+export const getLandlordMeters =
+  (payload: { id: string | undefined; serial_number?: string }): AppThunk =>
+  async (dispatch) => {
+    dispatch(setLoadingLandlordMeters(true));
+    try {
+      let url = `/customer-meter/landlord/${payload?.id}`;
+
+      if (payload?.serial_number) {
+        url += `?serial_number=${payload?.serial_number}`;
+      }
+      const response = await axiosInstance.get(url);
+
+      dispatch(setGetLandlordMeters(response.data.landlord_meters));
+    } catch (error: any) {
+      console.log(error?.response?.status, "errorrrrr");
+      if (error?.response?.status === 401) {
+        window.location.href = "/";
+        sessionStorage.clear();
+      }
+      Swal.fire(
+        "Error",
+        error?.response?.data ? error.response.data.message : error.message,
+        "error"
+      );
+      dispatch(
+        setGetLandlordMetersError(
+          error?.response?.data ? error.response.data.message : error.message
+        )
+      );
+    } finally {
+      dispatch(setLoadingLandlordMeters(false));
+    }
+  };
+
+export const getTenantMeters =
+  (payload: { id: string }): AppThunk =>
+  async (dispatch) => {
+    dispatch(setLoadingTenantMeter(true));
+    try {
+      let url = `/customer-meter/landlord/tenant/${payload?.id}`;
+
+      const response = await axiosInstance.get(url);
+
+      dispatch(setGetTenantMeter(response.data.tenant_meter));
+    } catch (error: any) {
+      Swal.fire(
+        "Error",
+        error?.response?.data ? error.response.data.message : error.message,
+        "error"
+      );
+      dispatch(
+        setGetTenantMeterError(
+          error?.response?.data ? error.response.data.message : error.message
+        )
+      );
+    } finally {
+      dispatch(setLoadingTenantMeter(false));
+    }
+  };
+
+export const updateCustomerMeter =
+  (payload: { id: string | undefined; data: { tenant_id?: string } }): AppThunk =>
+  async (dispatch) => {
+    dispatch(setUpdatingCustomerMeter(true));
+    try {
+      const response = await axiosInstance.patch(
+        `/customer-meter/${payload.id}`,
+        payload?.data
+      );
+      Swal.fire("Success", response.data.message, "success");
+      dispatch(setUpdateCustomerMeter(response.data));
+    } catch (error: any) {
+      Swal.fire(
+        "Error",
+        error?.response?.data ? error.response.data.message : error.message,
+        "error"
+      );
+      dispatch(
+        setUpdatingCustomerMeterError(
+          error?.response?.data ? error.response.data.message : error.message
+        )
+      );
+    } finally {
+      dispatch(setUpdatingCustomerMeter(false));
     }
   };
