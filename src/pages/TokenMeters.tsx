@@ -34,6 +34,8 @@ const TokenMeters = () => {
     };
   });
 
+  //array.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
   const tokenMeters = landlordMeters.map((item: CustomerMeter) => {
     return {
       device_status:
@@ -41,7 +43,8 @@ const TokenMeters = () => {
           ? "Active"
           : "Deactivated",
       meter_number: item?.Meter?.serial_number,
-      latest_token: item?.Meter?.MeterTokens[0]?.token,
+      latest_token:
+        item?.Meter?.MeterTokens[item?.Meter?.MeterTokens.length - 1]?.token,
       tenant: item?.Tenant
         ? `${item?.Tenant?.first_name} ${item?.Tenant?.last_name}`
         : "",
