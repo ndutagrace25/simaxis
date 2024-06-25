@@ -1,4 +1,5 @@
 import { Button, Divider } from "antd";
+import { useState } from "react";
 import { Pay } from ".";
 import Swal from "sweetalert2";
 import { appSession } from "../utils/appStorage";
@@ -8,26 +9,34 @@ interface Props {
   meter_number: string | undefined;
   latest_token: string;
   device_status: string;
-  isModalOpen: boolean;
-  handleOk: () => void;
-  handleCancel: () => void;
-  showModal: () => void;
   tenant?: string;
   customer_meter_id: string | undefined;
+  meter_id: string | undefined;
 }
 
 const MeterCard = ({
   meter_number,
   latest_token,
   device_status,
-  isModalOpen,
-  handleOk,
-  handleCancel,
-  showModal,
   tenant,
   customer_meter_id,
+  meter_id
 }: Props) => {
   const user = appSession.getUser();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <div className="shadow-sm rounded p-3 bg-white mb-2">
@@ -73,18 +82,14 @@ const MeterCard = ({
               />
             )}
             <div>
-              <Button
-                className="bg-blue px-5"
-                type="primary"
-                shape="round"
-                onClick={() => showModal()}
-              >
-                Pay
-              </Button>
               <Pay
                 isModalOpen={isModalOpen}
                 handleOk={handleOk}
                 handleCancel={handleCancel}
+                showModal={showModal}
+                meter_number={meter_number}
+                meter_id={meter_id}
+                phone={user?.phone}
               />
             </div>
           </div>

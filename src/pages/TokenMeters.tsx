@@ -8,7 +8,7 @@ import { appSession } from "../utils/appStorage";
 
 const TokenMeters = () => {
   const [token_meter, setTokenMeter] = useState<string | undefined>("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const dispatch = useDispatch<AppDispatch>();
 
   const user = appSession.getUser();
@@ -26,18 +26,6 @@ const TokenMeters = () => {
     tenantMeter,
     updatingCustomerMeter,
   } = useSelector((state: RootState) => state.meter);
-
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
 
   const metersToFilter = landlordMeters.map((item: any) => {
     return {
@@ -58,6 +46,7 @@ const TokenMeters = () => {
         ? `${item?.Tenant?.first_name} ${item?.Tenant?.last_name}`
         : "",
       customer_meter_id: item.id,
+      meter_id: item.meter_id,
     };
   });
 
@@ -106,12 +95,9 @@ const TokenMeters = () => {
                         device_status={item.device_status}
                         meter_number={item.meter_number}
                         latest_token={item.latest_token}
-                        isModalOpen={isModalOpen}
-                        handleOk={handleOk}
-                        handleCancel={handleCancel}
-                        showModal={showModal}
                         tenant={item.tenant}
                         customer_meter_id={item.customer_meter_id}
+                        meter_id={item.meter_id}
                       />
                     </div>
                   ))
@@ -130,16 +116,13 @@ const TokenMeters = () => {
                     }
                     meter_number={tenantMeter?.Meter?.serial_number}
                     latest_token={tenantMeter?.Meter?.MeterTokens[0]?.token}
-                    isModalOpen={isModalOpen}
-                    handleOk={handleOk}
-                    handleCancel={handleCancel}
-                    showModal={showModal}
                     tenant={
                       tenantMeter?.Tenant
                         ? `${tenantMeter?.Tenant?.first_name} ${tenantMeter?.Tenant?.last_name}`
                         : ""
                     }
                     customer_meter_id={tenantMeter.id}
+                    meter_id={tenantMeter.meter_id}
                   />
                 </div>
               ) : (

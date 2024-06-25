@@ -11,6 +11,7 @@ export interface User {
   is_verified: boolean;
   role: string;
   customer_id: string;
+  phone: string | undefined
 }
 
 interface LoginDetails {

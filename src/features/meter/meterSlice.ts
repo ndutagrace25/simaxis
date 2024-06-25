@@ -94,6 +94,8 @@ interface MeterState {
   updatedCustomerMeter: AddMeterResponse;
   updatingCustomerMeterError: string | null;
   updatingCustomerMeter: boolean;
+  buyingTokens: boolean;
+  buyingTokensError: string | null;
 }
 
 const initialState: MeterState = {
@@ -130,6 +132,8 @@ const initialState: MeterState = {
   updatedCustomerMeter: {},
   updatingCustomerMeterError: null,
   updatingCustomerMeter: false,
+  buyingTokens: false,
+  buyingTokensError: null,
 };
 
 const meterSlice = createSlice({
@@ -223,7 +227,7 @@ const meterSlice = createSlice({
     setGetLandlordMetersError(state, action: PayloadAction<string | null>) {
       state.landlordMetersError = action.payload;
     },
-  setLoadingLandlordMeters(state, action: PayloadAction<boolean>) {
+    setLoadingLandlordMeters(state, action: PayloadAction<boolean>) {
       state.loadingLandlordMeters = action.payload;
     },
     // TENANT METER
@@ -245,6 +249,13 @@ const meterSlice = createSlice({
     },
     setUpdatingCustomerMeter(state, action: PayloadAction<boolean>) {
       state.updatingCustomerMeter = action.payload;
+    },
+    // BUY TOKENS
+    setBuyingTokens(state, action: PayloadAction<boolean>) {
+      state.buyingTokens = action.payload;
+    },
+    setBuyingTokensError(state, action: PayloadAction<string | null>) {
+      state.buyingTokensError = action.payload;
     },
   },
 });
@@ -294,6 +305,9 @@ export const {
   setUpdateCustomerMeter,
   setUpdatingCustomerMeterError,
   setUpdatingCustomerMeter,
+  // buying tokens
+  setBuyingTokens,
+  setBuyingTokensError,
 } = meterSlice.actions;
 
 export default meterSlice.reducer;
@@ -553,7 +567,10 @@ export const getTenantMeters =
   };
 
 export const updateCustomerMeter =
-  (payload: { id: string | undefined; data: { tenant_id?: string } }): AppThunk =>
+  (payload: {
+    id: string | undefined;
+    data: { tenant_id?: string };
+  }): AppThunk =>
   async (dispatch) => {
     dispatch(setUpdatingCustomerMeter(true));
     try {
@@ -576,5 +593,36 @@ export const updateCustomerMeter =
       );
     } finally {
       dispatch(setUpdatingCustomerMeter(false));
+    }
+  };
+
+export const buyTokens =
+  (payload: {
+    phone: string;
+    amount: string;
+    meter_number: string | undefined;
+    meter_id: string | undefined;
+  }): AppThunk =>
+  async (dispatch) => {
+    dispatch(setBuyingTokens(true));
+    try {
+      const response = await axiosInstance.post(
+        `https://mpesa-api-crjs.onrender.com/pay`,
+        payload
+      );
+      Swal.fire("Success", response.data.CustomerMessage, "success");
+    } catch (error: any) {
+      Swal.fire(
+        "Error",
+        "There was a problem processing your payment. Please try again",
+        "error"
+      );
+      dispatch(
+        setBuyingTokensError(
+          "There was a problem processing your payment. Please try again"
+        )
+      );
+    } finally {
+      dispatch(setBuyingTokens(false));
     }
   };
