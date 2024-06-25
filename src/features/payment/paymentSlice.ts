@@ -9,7 +9,7 @@ export interface Payment {
   customer_id: string;
   meter_id: string;
   payment_date: string;
-  amount: number;
+  amount: number | string;
   payment_method: string;
   phone_number: string;
   meter_number: string;

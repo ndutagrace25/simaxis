@@ -15,6 +15,7 @@ const PaymentsTable = () => {
     return {
       ...item,
       payment_date: moment(item.payment_date).format("MM/DD/YYYY"),
+      amount: `KES ${item.amount}`
     };
   });
 
@@ -39,6 +40,11 @@ const PaymentsTable = () => {
       title: "Payment Code",
       dataIndex: "payment_code",
       key: "payment_code",
+    },
+    {
+      title: "Amount",
+      dataIndex: "amount",
+      key: "amount",
     },
     {
       title: "Payment Method",
