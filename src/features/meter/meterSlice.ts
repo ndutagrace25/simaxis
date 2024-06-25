@@ -96,6 +96,8 @@ interface MeterState {
   updatingCustomerMeter: boolean;
   buyingTokens: boolean;
   buyingTokensError: string | null;
+  clearingMeterTamper: boolean;
+  clearingMeterTamperError: string | null;
 }
 
 const initialState: MeterState = {
@@ -134,6 +136,8 @@ const initialState: MeterState = {
   updatingCustomerMeter: false,
   buyingTokens: false,
   buyingTokensError: null,
+  clearingMeterTamper: false,
+  clearingMeterTamperError: null,
 };
 
 const meterSlice = createSlice({
@@ -257,6 +261,13 @@ const meterSlice = createSlice({
     setBuyingTokensError(state, action: PayloadAction<string | null>) {
       state.buyingTokensError = action.payload;
     },
+    // CLEAR METER TAMPER
+    setClearingMeterTamper(state, action: PayloadAction<boolean>) {
+      state.clearingMeterTamper = action.payload;
+    },
+    setClearingMeterTamperError(state, action: PayloadAction<string | null>) {
+      state.clearingMeterTamperError = action.payload;
+    },
   },
 });
 
@@ -308,6 +319,9 @@ export const {
   // buying tokens
   setBuyingTokens,
   setBuyingTokensError,
+  // clearing meter tamper
+  setClearingMeterTamper,
+  setClearingMeterTamperError,
 } = meterSlice.actions;
 
 export default meterSlice.reducer;
@@ -624,5 +638,28 @@ export const buyTokens =
       );
     } finally {
       dispatch(setBuyingTokens(false));
+    }
+  };
+
+export const clearMeterTamper =
+  (payload: { id: string }): AppThunk =>
+  async (dispatch) => {
+    dispatch(setClearingMeterTamper(true));
+    try {
+      const response = await axiosInstance.post(`/meter/clear/tamper`, payload);
+      Swal.fire("Success", response.data.message, "success");
+    } catch (error: any) {
+      Swal.fire(
+        "Error",
+        error?.response?.data ? error.response.data.message : error.message,
+        "error"
+      );
+      dispatch(
+        setClearingMeterTamperError(
+          error?.response?.data ? error.response.data.message : error.message
+        )
+      );
+    } finally {
+      dispatch(setClearingMeterTamper(false));
     }
   };

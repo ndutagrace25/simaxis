@@ -4,7 +4,7 @@ import { IconPencil } from "@tabler/icons-react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
 
-import { syncMeter } from "../../features/meter/meterSlice";
+import { clearMeterTamper, syncMeter } from "../../features/meter/meterSlice";
 
 const UpdateMeter = ({
   meter_number,
@@ -16,7 +16,7 @@ const UpdateMeter = ({
   id: string;
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { syncingMeterToStron } = useSelector(
+  const { syncingMeterToStron, clearingMeterTamper } = useSelector(
     (state: RootState) => state.meter
   );
   const dispatch = useDispatch<AppDispatch>();
@@ -56,20 +56,33 @@ const UpdateMeter = ({
         <div className="d-flex justify-content-between">
           {!is_synced_to_stron && (
             <>
-              {syncingMeterToStron ? (
+              {syncingMeterToStron || clearingMeterTamper ? (
                 <Spin />
               ) : (
-                <Button
-                  className="bg-success text-white my-3"
-                  size="small"
-                  onClick={() => {
-                    dispatch(syncMeter({ id }));
-                  }}
-                >
-                  Forward to Stron
-                </Button>
+                <>
+                  <Button
+                    className="bg-success text-white my-3"
+                    size="small"
+                    onClick={() => {
+                      dispatch(syncMeter({ id }));
+                    }}
+                  >
+                    Forward to Stron
+                  </Button>
+                </>
               )}
             </>
+          )}
+          {is_synced_to_stron && (
+            <Button
+              className="bg-success text-white my-3"
+              size="small"
+              onClick={() => {
+                dispatch(clearMeterTamper({ id }));
+              }}
+            >
+              Clear meter tamper
+            </Button>
           )}
         </div>
       </Modal>

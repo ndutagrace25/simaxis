@@ -7,8 +7,13 @@ import { Spin, Table } from "antd";
 import { UpdateMeter } from ".";
 
 const MetersTable = () => {
-  const { meters, loadingMeters, savingMeter, syncingMeterToStron } =
-    useSelector((state: RootState) => state.meter);
+  const {
+    meters,
+    loadingMeters,
+    savingMeter,
+    syncingMeterToStron,
+    clearingMeterTamper,
+  } = useSelector((state: RootState) => state.meter);
   const dispatch = useDispatch<AppDispatch>();
 
   const dataSource = meters.map((item: Meter) => {
@@ -60,6 +65,11 @@ const MetersTable = () => {
       key: "is_synced_to_stron",
     },
     {
+      title: "Tamper Value",
+      dataIndex: "tamper_value",
+      key: "tamper_value",
+    },
+    {
       title: "Date Created",
       dataIndex: "created_at",
       key: "created_at",
@@ -73,11 +83,11 @@ const MetersTable = () => {
 
   useEffect(() => {
     dispatch(getMeters());
-  }, [savingMeter, syncingMeterToStron]);
+  }, [clearingMeterTamper, savingMeter, syncingMeterToStron]);
 
   return (
     <div className="mt-3">
-      {loadingMeters || syncingMeterToStron ? (
+      {loadingMeters || syncingMeterToStron || clearingMeterTamper ? (
         <Spin />
       ) : (
         <>
