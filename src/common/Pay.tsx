@@ -56,9 +56,6 @@ const Pay = ({
     }));
   };
 
-  console.log("Current form inputs:", formInputs);
-  console.log("Current meter_number prop:", meter_number);
-
   return (
     <>
       <Button
@@ -72,7 +69,7 @@ const Pay = ({
         Pay
       </Button>
       <Modal
-        title={<div className="text-center">Top up your tokens {meter_id}</div>}
+        title={<div className="text-center">Top up your tokens</div>}
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
