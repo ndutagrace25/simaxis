@@ -4,6 +4,7 @@ import { AllTenants } from "./tenants";
 import { AllCustomerMeters } from "./customerMeters";
 import { Tabs } from "antd";
 import type { TabsProps } from "antd";
+import { AllPayments } from "./payments";
 
 const AdminTabs = () => {
   const onChange = (key: string) => {
@@ -37,7 +38,7 @@ const AdminTabs = () => {
     {
       key: "5",
       label: "Payments",
-      children: "Payments",
+      children: <AllPayments />,
     },
     {
       key: "6",
