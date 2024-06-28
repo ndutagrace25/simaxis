@@ -5,6 +5,7 @@ import { AllCustomerMeters } from "./customerMeters";
 import { Tabs } from "antd";
 import type { TabsProps } from "antd";
 import { AllPayments } from "./payments";
+import { AllTokens } from "./tokens";
 
 const AdminTabs = () => {
   const onChange = (key: string) => {
@@ -43,7 +44,7 @@ const AdminTabs = () => {
     {
       key: "6",
       label: "Tokens",
-      children: "Tokens",
+      children: <AllTokens />,
     },
   ];
   return <Tabs defaultActiveKey="1" items={items} onChange={onChange} />;
