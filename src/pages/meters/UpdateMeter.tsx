@@ -4,7 +4,11 @@ import { IconPencil } from "@tabler/icons-react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
 
-import { clearMeterTamper, syncMeter } from "../../features/meter/meterSlice";
+import {
+  clearMeterCredit,
+  clearMeterTamper,
+  syncMeter,
+} from "../../features/meter/meterSlice";
 
 const UpdateMeter = ({
   meter_number,
@@ -16,9 +20,8 @@ const UpdateMeter = ({
   id: string;
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { syncingMeterToStron, clearingMeterTamper } = useSelector(
-    (state: RootState) => state.meter
-  );
+  const { syncingMeterToStron, clearingMeterCredit, clearingMeterTamper } =
+    useSelector((state: RootState) => state.meter);
   const dispatch = useDispatch<AppDispatch>();
 
   const showModal = () => {
@@ -56,7 +59,9 @@ const UpdateMeter = ({
         <div className="d-flex justify-content-between">
           {!is_synced_to_stron && (
             <>
-              {syncingMeterToStron || clearingMeterTamper ? (
+              {syncingMeterToStron ||
+              clearingMeterTamper ||
+              clearingMeterCredit ? (
                 <Spin />
               ) : (
                 <>
@@ -74,15 +79,26 @@ const UpdateMeter = ({
             </>
           )}
           {is_synced_to_stron && (
-            <Button
-              className="bg-success text-white my-3"
-              size="small"
-              onClick={() => {
-                dispatch(clearMeterTamper({ id }));
-              }}
-            >
-              Clear meter tamper
-            </Button>
+            <>
+              <Button
+                className="bg-success text-white my-3"
+                size="small"
+                onClick={() => {
+                  dispatch(clearMeterTamper({ id }));
+                }}
+              >
+                Clear meter tamper
+              </Button>
+              <Button
+                className="bg-primary text-white my-3"
+                size="small"
+                onClick={() => {
+                  dispatch(clearMeterCredit({ id }));
+                }}
+              >
+                Clear meter credit (10KWh)
+              </Button>
+            </>
           )}
         </div>
       </Modal>

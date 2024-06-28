@@ -98,6 +98,8 @@ interface MeterState {
   buyingTokensError: string | null;
   clearingMeterTamper: boolean;
   clearingMeterTamperError: string | null;
+  clearingMeterCredit: boolean;
+  clearingMeterCreditError: string | null;
 }
 
 const initialState: MeterState = {
@@ -138,6 +140,8 @@ const initialState: MeterState = {
   buyingTokensError: null,
   clearingMeterTamper: false,
   clearingMeterTamperError: null,
+  clearingMeterCredit: false,
+  clearingMeterCreditError: null,
 };
 
 const meterSlice = createSlice({
@@ -268,6 +272,13 @@ const meterSlice = createSlice({
     setClearingMeterTamperError(state, action: PayloadAction<string | null>) {
       state.clearingMeterTamperError = action.payload;
     },
+    // CLEAR METER CREDIT
+    setClearingMeterCredit(state, action: PayloadAction<boolean>) {
+      state.clearingMeterCredit = action.payload;
+    },
+    setClearingMeterCreditError(state, action: PayloadAction<string | null>) {
+      state.clearingMeterCreditError = action.payload;
+    },
   },
 });
 
@@ -322,6 +333,9 @@ export const {
   // clearing meter tamper
   setClearingMeterTamper,
   setClearingMeterTamperError,
+  // clearing meter credit
+  setClearingMeterCredit,
+  setClearingMeterCreditError,
 } = meterSlice.actions;
 
 export default meterSlice.reducer;
@@ -661,5 +675,28 @@ export const clearMeterTamper =
       );
     } finally {
       dispatch(setClearingMeterTamper(false));
+    }
+  };
+
+export const clearMeterCredit =
+  (payload: { id: string }): AppThunk =>
+  async (dispatch) => {
+    dispatch(setClearingMeterCredit(true));
+    try {
+      const response = await axiosInstance.post(`/meter/clear/credit`, payload);
+      Swal.fire("Success", response.data.message, "success");
+    } catch (error: any) {
+      Swal.fire(
+        "Error",
+        error?.response?.data ? error.response.data.message : error.message,
+        "error"
+      );
+      dispatch(
+        setClearingMeterCreditError(
+          error?.response?.data ? error.response.data.message : error.message
+        )
+      );
+    } finally {
+      dispatch(setClearingMeterCredit(false));
     }
   };

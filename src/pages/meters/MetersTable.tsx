@@ -12,6 +12,7 @@ const MetersTable = () => {
     loadingMeters,
     savingMeter,
     syncingMeterToStron,
+    clearingMeterCredit,
     clearingMeterTamper,
   } = useSelector((state: RootState) => state.meter);
   const dispatch = useDispatch<AppDispatch>();
@@ -70,6 +71,11 @@ const MetersTable = () => {
       key: "tamper_value",
     },
     {
+      title: "Credit Value (10KWh)",
+      dataIndex: "credit_value",
+      key: "credit_value",
+    },
+    {
       title: "Date Created",
       dataIndex: "created_at",
       key: "created_at",
@@ -83,11 +89,19 @@ const MetersTable = () => {
 
   useEffect(() => {
     dispatch(getMeters());
-  }, [clearingMeterTamper, savingMeter, syncingMeterToStron]);
+  }, [
+    clearingMeterCredit,
+    clearingMeterTamper,
+    savingMeter,
+    syncingMeterToStron,
+  ]);
 
   return (
     <div className="mt-3">
-      {loadingMeters || syncingMeterToStron || clearingMeterTamper ? (
+      {loadingMeters ||
+      syncingMeterToStron ||
+      clearingMeterTamper ||
+      clearingMeterCredit ? (
         <Spin />
       ) : (
         <>
