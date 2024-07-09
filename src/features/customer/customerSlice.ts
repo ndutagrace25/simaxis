@@ -176,27 +176,34 @@ export const {
 
 export default authSlice.reducer;
 
-export const getCustomers = (): AppThunk => async (dispatch) => {
-  dispatch(setLoadingCustomers(true));
-  try {
-    const response = await axiosInstance.get(`/customer`);
+export const getCustomers =
+  (payload: any): AppThunk =>
+  async (dispatch) => {
+    dispatch(setLoadingCustomers(true));
+    try {
+      const response = await axiosInstance.get(`/customer?keyword=${payload}`);
 
-    dispatch(setCustomers(response.data.customers));
-  } catch (error: any) {
-    Swal.fire(
-      "Error",
-      error?.response?.data ? error.response.data.message : error.message,
-      "error"
-    );
-    dispatch(
-      setCustomersError(
-        error?.response?.data ? error.response.data.message : error.message
-      )
-    );
-  } finally {
-    dispatch(setLoadingCustomers(false));
-  }
-};
+      dispatch(setCustomers(response.data.customers));
+    } catch (error: any) {
+      console.log(error?.response?.status, "errorrrr");
+
+      if (error?.response?.status === 401) {
+        window.location.href = "/";
+      }
+      Swal.fire(
+        "Error",
+        error?.response?.data ? error.response.data.message : error.message,
+        "error"
+      );
+      dispatch(
+        setCustomersError(
+          error?.response?.data ? error.response.data.message : error.message
+        )
+      );
+    } finally {
+      dispatch(setLoadingCustomers(false));
+    }
+  };
 
 export const verifyCustomer =
   (payload: { id: string }): AppThunk =>

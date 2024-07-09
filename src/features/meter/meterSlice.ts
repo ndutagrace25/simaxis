@@ -347,6 +347,9 @@ export const getMeters = (): AppThunk => async (dispatch) => {
 
     dispatch(setMeters(response.data.meters));
   } catch (error: any) {
+    if (error?.response?.status === 401) {
+      window.location.href = "/";
+    }
     Swal.fire(
       "Error",
       error?.response?.data ? error.response.data.message : error.message,
@@ -375,6 +378,9 @@ export const saveMeter =
       Swal.fire("Success", response.data.message, "success");
       dispatch(setSaveMeter(response.data));
     } catch (error: any) {
+      if (error?.response?.status === 401) {
+        window.location.href = "/";
+      }
       Swal.fire(
         "Error",
         error?.response?.data ? error.response.data.message : error.message,

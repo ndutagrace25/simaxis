@@ -62,6 +62,9 @@ export const getTokens = (): AppThunk => async (dispatch) => {
 
     dispatch(setTokens(response.data.tokens));
   } catch (error: any) {
+    if (error?.response?.status === 401) {
+      window.location.href = "/";
+    }
     Swal.fire(
       "Error",
       error?.response?.data ? error.response.data.message : error.message,

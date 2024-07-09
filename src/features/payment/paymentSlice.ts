@@ -62,6 +62,9 @@ export const getPayments = (): AppThunk => async (dispatch) => {
 
     dispatch(setPayments(response.data.payments));
   } catch (error: any) {
+    if (error?.response?.status === 401) {
+      window.location.href = "/";
+    }
     Swal.fire(
       "Error",
       error?.response?.data ? error.response.data.message : error.message,
