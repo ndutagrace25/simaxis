@@ -1,6 +1,6 @@
 import { Tabs, ConfigProvider } from "antd";
 import meterbox from "../assets/meterbox.png";
-import { IconMessage } from "@tabler/icons-react";
+// import { IconMessage } from "@tabler/icons-react";
 import { TokenMeters } from "../pages";
 
 const AccountTabs = () => {
