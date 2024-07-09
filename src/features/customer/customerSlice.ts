@@ -177,7 +177,7 @@ export const {
 export default authSlice.reducer;
 
 export const getCustomers =
-  (payload: any): AppThunk =>
+  (payload?: any): AppThunk =>
   async (dispatch) => {
     dispatch(setLoadingCustomers(true));
     try {

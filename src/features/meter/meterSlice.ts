@@ -17,6 +17,8 @@ export interface Meter {
     id?: string;
     meter_id?: string;
   };
+  tamper_value?: string;
+  credit_value?: string;
 }
 
 export interface CustomerMeter {
@@ -340,30 +342,32 @@ export const {
 
 export default meterSlice.reducer;
 
-export const getMeters = (): AppThunk => async (dispatch) => {
-  dispatch(setLoadingMeters(true));
-  try {
-    const response = await axiosInstance.get(`/meter`);
+export const getMeters =
+  (payload?: any): AppThunk =>
+  async (dispatch) => {
+    dispatch(setLoadingMeters(true));
+    try {
+      const response = await axiosInstance.get(`/meter?keyword=${payload}`);
 
-    dispatch(setMeters(response.data.meters));
-  } catch (error: any) {
-    if (error?.response?.status === 401) {
-      window.location.href = "/";
+      dispatch(setMeters(response.data.meters));
+    } catch (error: any) {
+      if (error?.response?.status === 401) {
+        window.location.href = "/";
+      }
+      Swal.fire(
+        "Error",
+        error?.response?.data ? error.response.data.message : error.message,
+        "error"
+      );
+      dispatch(
+        setMetersError(
+          error?.response?.data ? error.response.data.message : error.message
+        )
+      );
+    } finally {
+      dispatch(setLoadingMeters(false));
     }
-    Swal.fire(
-      "Error",
-      error?.response?.data ? error.response.data.message : error.message,
-      "error"
-    );
-    dispatch(
-      setMetersError(
-        error?.response?.data ? error.response.data.message : error.message
-      )
-    );
-  } finally {
-    dispatch(setLoadingMeters(false));
-  }
-};
+  };
 
 export const saveMeter =
   (payload: {

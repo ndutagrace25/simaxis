@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { AddMeter, MetersTable } from ".";
+import { MetersTable } from ".";
 import { AppDispatch } from "../../store";
 import { useEffect } from "react";
 import { getCounties, getMeterTypes } from "../../features/meter/meterSlice";
@@ -14,7 +14,6 @@ const AllMeters = () => {
 
   return (
     <div className="mb-4">
-      <AddMeter />
       <MetersTable />
     </div>
   );
