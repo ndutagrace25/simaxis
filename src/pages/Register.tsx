@@ -8,8 +8,8 @@ import {
   type FormProps,
   Spin,
 } from "antd";
-import { setKey, fromAddress } from "react-geocode";
-import GooglePlacesAutocomplete from "react-google-places-autocomplete";
+// import { setKey, fromAddress } from "react-geocode";
+// import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import { NavBar, NavDetails } from "../common";
 import { registerUser } from "../features/auth/authSlice";
 import Select from "react-select";
@@ -49,10 +49,10 @@ type FieldType = {
 const Register = () => {
   const [role, setUserType] = useState("");
   const dispatch = useDispatch<AppDispatch>();
-  const [address, setAddress] = useState<any>(null);
-  const [location, setLocation] = useState<any>(null);
-  const [lat, setLat] = useState<any>(null);
-  const [long, setLong] = useState<any>(null);
+  // const [address, setAddress] = useState<any>(null);
+  // const [location, setLocation] = useState<any>(null);
+  // const [lat, setLat] = useState<any>(null);
+  // const [long, setLong] = useState<any>(null);
   const [landlord_id, setLandlord] = useState<any>(null);
 
   const { loadingRegistration } = useSelector((state: RootState) => state.auth);
@@ -80,55 +80,51 @@ const Register = () => {
     if (values.password !== values.confirm_password) {
       Swal.fire("Error", "Password didn't match!", "error");
     } else {
-      if (values.role === "Landlord" && !location) {
-        Swal.fire("Error", "Please select a location", "error");
+      if (values.role === "Tenant" && !landlord_id?.value) {
+        Swal.fire("Error", "Please select a landlord", "error");
       } else {
-        if (values.role === "Tenant" && !landlord_id?.value) {
-          Swal.fire("Error", "Please select a location", "error");
-        } else {
-          dispatch(
-            registerUser({
-              username: values.username,
-              phone: values.phone,
-              email: values.email,
-              role: values.role,
-              password: values.password,
-              first_name: values.first_name,
-              middle_name: values.middle_name,
-              last_name: values.last_name,
-              location,
-              lat,
-              long,
-              national_id: values.national_id,
-              building_name: values.building_name,
-              plot_number: values.plot_number,
-              meter_number: values.meter_number,
-              landlord_id: landlord_id?.value,
-            })
-          );
-        }
+        dispatch(
+          registerUser({
+            username: values.username,
+            phone: values.phone,
+            email: values.email,
+            role: values.role,
+            password: values.password,
+            first_name: values.first_name,
+            middle_name: values.middle_name,
+            last_name: values.last_name,
+            location: values.location,
+            // lat,
+            // long,
+            national_id: values.national_id,
+            building_name: values.building_name,
+            plot_number: values.plot_number,
+            meter_number: values.meter_number,
+            landlord_id: landlord_id?.value,
+          })
+        );
       }
     }
   };
 
-  const onChangeAddress: any = (address: any) => {
-    setLocation(address?.label);
-    setAddress(address);
+  // const onChangeAddress: any = (address: any) => {
+  //   setLocation(address?.label);
+  //   setAddress(address);
 
-    setKey("AIzaSyDnogG0wcavOEE8_BkXdzq6fiaBBEQ5GYQ");
+  //   setKey("AIzaSyDnogG0wcavOEE8_BkXdzq6fiaBBEQ5GYQ");
 
-    // get lat and lon of the address
-    fromAddress(address?.label).then(
-      (response: any) => {
-        const { lat, lng } = response?.results[0].geometry.location;
-        setLat(lat);
-        setLong(lng);
-      },
-      (error: any) => {
-        console.error(error);
-      }
-    );
-  };
+  //   // get lat and lon of the address
+  //   fromAddress(address?.label).then(
+  //     (response: any) => {
+  //       const { lat, lng } = response?.results[0].geometry.location;
+  //       setLat(lat);
+  //       setLong(lng);
+  //     },
+  //     (error: any) => {
+  //       console.error(error);
+  //     }
+  //   );
+  // };
 
   return (
     <>
@@ -212,7 +208,7 @@ const Register = () => {
 
           {role === "Landlord" && (
             <>
-              <Form.Item
+              {/* <Form.Item
                 className=""
                 label="Location"
                 name="location"
@@ -246,6 +242,13 @@ const Register = () => {
                 rules={[{ required: true, message: "Please input!" }]}
               >
                 <Input />
+              </Form.Item> */}
+              <Form.Item
+                label="Location"
+                name="location"
+                rules={[{ required: true, message: "Please input!" }]}
+              >
+                <Input style={{ width: "100%" }} />
               </Form.Item>
             </>
           )}
