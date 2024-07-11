@@ -139,6 +139,7 @@ const AllCustomers = () => {
 
   const refresh = () => {
     dispatch(getCustomers(""));
+    setKeyword("");
   };
 
   return (

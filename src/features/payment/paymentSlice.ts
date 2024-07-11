@@ -55,10 +55,10 @@ export const {
 
 export default paymentSlice.reducer;
 
-export const getPayments = (): AppThunk => async (dispatch) => {
+export const getPayments = (payload?: any): AppThunk => async (dispatch) => {
   dispatch(setLoadingPayments(true));
   try {
-    const response = await axiosInstance.get(`/payments`);
+    const response = await axiosInstance.get(`/payments?keyword=${payload}`);
 
     dispatch(setPayments(response.data.payments));
   } catch (error: any) {
