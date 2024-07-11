@@ -28,6 +28,8 @@ const CustomerMetersTable = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const [customer_id, setLandlord] = useState<any>(null);
+  const [meter_id, setMeter] = useState<any>(null);
+  const [county_number, setCounty] = useState<any>(null);
 
   const displayCounties = counties.map((county: any) => {
     return { value: county?.code, label: county?.name };
@@ -82,9 +84,7 @@ const CustomerMetersTable = () => {
       tenant: item?.Tenant?.first_name
         ? `${item?.Tenant?.first_name} ${item?.Tenant?.last_name}`
         : "N/A",
-      is_forwarded: item.is_synced_to_stron
-        ? "Forwarded"
-        : "Not Forwarded",
+      is_forwarded: item.is_synced_to_stron ? "Forwarded" : "Not Forwarded",
     };
   });
 
@@ -131,23 +131,52 @@ const CustomerMetersTable = () => {
     dispatch(getCustomerMeters());
   }, [syncingCustomerMeterToStron]);
 
+  useEffect(() => {
+    let data = {
+      meter_id: meter_id?.value ? meter_id?.value : "",
+      customer_id: customer_id?.value ? customer_id?.value : "",
+      county_number: county_number?.value ? county_number?.value : "",
+    };
+    dispatch(getCustomerMeters(data));
+  }, [meter_id?.value, customer_id?.value, county_number?.value]);
+
   const handleLandlordChange = (selectedOption: {
     value: string;
     label: string;
   }) => {
     setLandlord(selectedOption);
+    setMeter("");
+  };
+
+  const handleMeterChange = (selectedOption: {
+    value: string;
+    label: string;
+  }) => {
+    setMeter(selectedOption);
+    setLandlord("");
+    setCounty("");
+  };
+  const handleCountyChange = (selectedOption: {
+    value: string;
+    label: string;
+  }) => {
+    setCounty(selectedOption);
+    setMeter("");
   };
 
   const refresh = () => {
     dispatch(getCustomerMeters());
+    setLandlord("");
+    setCounty("");
+    setMeter("");
   };
 
   return (
     <div className="mt-3">
       <div className="d-flex justify-content-between mb-3">
         <Select
-          value={customer_id}
-          onChange={(option) => handleLandlordChange(option)}
+          value={meter_id}
+          onChange={(option) => handleMeterChange(option)}
           options={displayMeters}
           placeholder="Select a meter..."
           className="col-md-2"
@@ -161,8 +190,8 @@ const CustomerMetersTable = () => {
         />
 
         <Select
-          value={customer_id}
-          onChange={(option) => handleLandlordChange(option)}
+          value={county_number}
+          onChange={(option) => handleCountyChange(option)}
           options={displayCounties}
           placeholder="Select county..."
           className="col-md-2"

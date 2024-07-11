@@ -490,27 +490,40 @@ export const getSyncedMeters = (): AppThunk => async (dispatch) => {
   }
 };
 
-export const getCustomerMeters = (): AppThunk => async (dispatch) => {
-  dispatch(setLoadingCustomerMeters(true));
-  try {
-    const response = await axiosInstance.get(`/customer-meter`);
+export const getCustomerMeters =
+  (payload?: any): AppThunk =>
+  async (dispatch) => {
+    dispatch(setLoadingCustomerMeters(true));
 
-    dispatch(setCustomerMeters(response.data.customer_meters));
-  } catch (error: any) {
-    Swal.fire(
-      "Error",
-      error?.response?.data ? error.response.data.message : error.message,
-      "error"
-    );
-    dispatch(
-      setCustomerMetersError(
-        error?.response?.data ? error.response.data.message : error.message
-      )
-    );
-  } finally {
-    dispatch(setLoadingCustomerMeters(false));
-  }
-};
+    let url = `/customer-meter`;
+    if (payload?.customer_id && !payload?.county_number) {
+      url += `?customer_id=${payload.customer_id}`;
+    }
+    if (payload?.meter_id) {
+      url += `?meter_id=${payload.meter_id}`;
+    }
+    if (payload?.customer_id && payload?.county_number) {
+      url += `?customer_id=${payload.customer_id}&county_number=${payload.county_number}`;
+    }
+    try {
+      const response = await axiosInstance.get(url);
+
+      dispatch(setCustomerMeters(response.data.customer_meters));
+    } catch (error: any) {
+      Swal.fire(
+        "Error",
+        error?.response?.data ? error.response.data.message : error.message,
+        "error"
+      );
+      dispatch(
+        setCustomerMetersError(
+          error?.response?.data ? error.response.data.message : error.message
+        )
+      );
+    } finally {
+      dispatch(setLoadingCustomerMeters(false));
+    }
+  };
 
 export const syncCustomerMeter =
   (payload: {
