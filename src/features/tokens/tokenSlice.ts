@@ -55,27 +55,33 @@ export const {
 
 export default tokenSlice.reducer;
 
-export const getTokens = (): AppThunk => async (dispatch) => {
-  dispatch(setLoadingTokens(true));
-  try {
-    const response = await axiosInstance.get(`/tokens`);
+export const getTokens =
+  (payload?: any): AppThunk =>
+  async (dispatch) => {
+    dispatch(setLoadingTokens(true));
 
-    dispatch(setTokens(response.data.tokens));
-  } catch (error: any) {
-    if (error?.response?.status === 401) {
-      window.location.href = "/";
+    let url = `/tokens`;
+
+    if (payload) url += `?meter_id=${payload}`;
+    try {
+      const response = await axiosInstance.get(url);
+
+      dispatch(setTokens(response.data.tokens));
+    } catch (error: any) {
+      if (error?.response?.status === 401) {
+        window.location.href = "/";
+      }
+      Swal.fire(
+        "Error",
+        error?.response?.data ? error.response.data.message : error.message,
+        "error"
+      );
+      dispatch(
+        setTokenError(
+          error?.response?.data ? error.response.data.message : error.message
+        )
+      );
+    } finally {
+      dispatch(setLoadingTokens(false));
     }
-    Swal.fire(
-      "Error",
-      error?.response?.data ? error.response.data.message : error.message,
-      "error"
-    );
-    dispatch(
-      setTokenError(
-        error?.response?.data ? error.response.data.message : error.message
-      )
-    );
-  } finally {
-    dispatch(setLoadingTokens(false));
-  }
-};
+  };
