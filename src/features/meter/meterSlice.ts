@@ -102,6 +102,7 @@ interface MeterState {
   clearingMeterTamperError: string | null;
   clearingMeterCredit: boolean;
   clearingMeterCreditError: string | null;
+  generatingToken: boolean;
 }
 
 const initialState: MeterState = {
@@ -144,6 +145,7 @@ const initialState: MeterState = {
   clearingMeterTamperError: null,
   clearingMeterCredit: false,
   clearingMeterCreditError: null,
+  generatingToken: false,
 };
 
 const meterSlice = createSlice({
@@ -281,6 +283,9 @@ const meterSlice = createSlice({
     setClearingMeterCreditError(state, action: PayloadAction<string | null>) {
       state.clearingMeterCreditError = action.payload;
     },
+    setGenerateToken(state, action: PayloadAction<boolean>) {
+      state.generatingToken = action.payload;
+    },
   },
 });
 
@@ -338,6 +343,8 @@ export const {
   // clearing meter credit
   setClearingMeterCredit,
   setClearingMeterCreditError,
+  // generating token
+  setGenerateToken,
 } = meterSlice.actions;
 
 export default meterSlice.reducer;
@@ -721,5 +728,28 @@ export const clearMeterCredit =
       );
     } finally {
       dispatch(setClearingMeterCredit(false));
+    }
+  };
+
+export const generateToken =
+  (payload: any): AppThunk =>
+  async (dispatch) => {
+    dispatch(setGenerateToken(true));
+    try {
+      const response = await axiosInstance.post(
+        `/customer-meter/manual/payment`,
+        payload
+      );
+      Swal.fire("Success", response.data.message, "success");
+      dispatch(setGenerateToken(false));
+    } catch (error: any) {
+      Swal.fire(
+        "Error",
+        error?.response?.data ? error.response.data.message : error.message,
+        "error"
+      );
+      dispatch(setGenerateToken(false));
+    } finally {
+      dispatch(setGenerateToken(false));
     }
   };

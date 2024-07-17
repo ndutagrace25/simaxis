@@ -8,10 +8,14 @@ import { IconDownload, IconRefresh } from "@tabler/icons-react";
 import { CSVLink } from "react-csv";
 import { getMeters, Meter } from "../../features/meter/meterSlice";
 import Select from "react-select";
+import { GenerateToken } from ".";
 
 const TokensTable = () => {
   const { tokens, loadingTokens } = useSelector(
     (state: RootState) => state.token
+  );
+  const {  generatingToken } = useSelector(
+    (state: RootState) => state.meter
   );
   const [meter_id, setMeter] = useState<any>(null);
 
@@ -96,6 +100,7 @@ const TokensTable = () => {
   return (
     <div className="mt-3">
       <div className="d-flex justify-content-between mb-3">
+        <GenerateToken />
         <Select
           value={meter_id}
           onChange={(option) => handleMeterChange(option)}
@@ -130,7 +135,7 @@ const TokensTable = () => {
           />
         </Tooltip>
       </div>
-      {loadingTokens ? (
+      {(loadingTokens || generatingToken)? (
         <Spin />
       ) : (
         <>
