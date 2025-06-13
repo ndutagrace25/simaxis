@@ -6,12 +6,15 @@ import type { TabsProps } from "antd";
 import { AllPayments } from "./payments";
 import { AllTokens } from "./tokens";
 import { RevenueReport } from "./revenue";
+import { appSession } from "../utils/appStorage";
 
 const AdminTabs = () => {
+  const user = appSession.getUser();
   const onChange = (key: string) => {
     console.log(key);
   };
-  const items: TabsProps["items"] = [
+
+  const baseItems: TabsProps["items"] = [
     {
       key: "1",
       label: "Agents/Landlords",
@@ -26,7 +29,6 @@ const AdminTabs = () => {
       label: "Meters",
       children: <AllMeters />,
     },
-
     {
       key: "4",
       label: "Customer Meters",
@@ -42,12 +44,20 @@ const AdminTabs = () => {
       label: "Tokens",
       children: <AllTokens />,
     },
-    {
-      key: "7",
-      label: "Revenue Reports",
-      children: <RevenueReport />,
-    },
   ];
+
+  const items =
+    user?.role !== "System User"
+      ? [
+          ...baseItems,
+          {
+            key: "7",
+            label: "Revenue Reports",
+            children: <RevenueReport />,
+          },
+        ]
+      : baseItems;
+
   return <Tabs defaultActiveKey="1" items={items} onChange={onChange} />;
 };
 

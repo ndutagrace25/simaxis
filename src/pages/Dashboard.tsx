@@ -70,11 +70,12 @@ const Dashboard = () => {
           )}
         </div>
       </div>
-      {user?.is_verified && user?.role === "Super Admin" && (
-        <div className="bg-white mx-3 px-3 rounded">
-          <AdminTabs />
-        </div>
-      )}
+      {user?.is_verified &&
+        (user?.role === "Super Admin" || user?.role === "System User") && (
+          <div className="bg-white mx-3 px-3 rounded">
+            <AdminTabs />
+          </div>
+        )}
     </>
   );
 };
