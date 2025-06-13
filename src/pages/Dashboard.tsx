@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Button } from "antd";
 import { NavBar, AccountTabs } from "../common";
 import { IconUserCircle } from "@tabler/icons-react";
@@ -56,7 +57,7 @@ const Dashboard = () => {
           </Button>
         </div>
       </NavBar>
-      <div className="my-4 d-flex justify-content-center">
+      <div className=" d-flex justify-content-center">
         <div className={isMobile ? "col-12 px-1" : "col-5 p-3"}>
           {(user?.role === "Tenant" || user?.role === "Landlord") && (
             <>

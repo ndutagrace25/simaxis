@@ -1,11 +1,14 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import axios from "axios";
 
 // @ts-ignore
-const isDevelopment = import.meta.env.VITE_NODE_ENV === "development";
+// const isDevelopment = import.meta.env.VITE_NODE_ENV === "development";
+const isDevelopment = process.env.VITE_NODE_ENV === "development";
 
 const axiosInstance = axios.create({
   // @ts-ignore
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  // baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: process.env.VITE_NODE_ENV,
 });
 
 axiosInstance.interceptors.request.use((request) => {

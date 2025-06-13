@@ -1,6 +1,7 @@
 import CryptoJS from "crypto-js";
 
-const ENCRYPTION_KEY = import.meta.env.VITE_ENCRYPTION_KEY || ""; // This key should be securely stored, preferably as an environment variable
+const ENCRYPTION_KEY =
+  import.meta.env.VITE_ENCRYPTION_KEY || process.env.VITE_ENCRYPTION_KEY || ""; // This key should be securely stored, preferably as an environment variable
 
 // Function to encrypt data
 export const encryptData = (data: any): string => {
