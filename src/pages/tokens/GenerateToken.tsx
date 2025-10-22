@@ -1,3 +1,5 @@
+/* eslint-disable prefer-const */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { Button, Input, Modal, Spin } from "antd";
 import { useDispatch, useSelector } from "react-redux";

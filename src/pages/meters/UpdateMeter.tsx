@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { Button, Modal, Spin } from "antd";
-import { IconPencil } from "@tabler/icons-react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
 
@@ -14,36 +14,36 @@ const UpdateMeter = ({
   meter_number,
   is_synced_to_stron,
   id,
+  onClose,
 }: {
   meter_number: string;
   is_synced_to_stron: any;
   id: string;
+  onClose?: () => void;
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(true);
   const { syncingMeterToStron, clearingMeterCredit, clearingMeterTamper } =
     useSelector((state: RootState) => state.meter);
   const dispatch = useDispatch<AppDispatch>();
 
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
   const handleOk = () => {
-    setIsModalOpen(false);
+    if (onClose) {
+      onClose();
+    } else {
+      setIsModalOpen(false);
+    }
   };
 
   const handleCancel = () => {
-    setIsModalOpen(false);
+    if (onClose) {
+      onClose();
+    } else {
+      setIsModalOpen(false);
+    }
   };
 
   return (
     <>
-      <IconPencil
-        type="primary"
-        onClick={showModal}
-        width={16}
-        className="cursor text-primary"
-      />
       <Modal
         title={`Update meter ${meter_number} details`}
         open={isModalOpen}

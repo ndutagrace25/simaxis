@@ -1,3 +1,5 @@
+/* eslint-disable prefer-const */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
 import {
@@ -9,12 +11,28 @@ import {
 } from "../../features/meter/meterSlice";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { Button, Spin, Table, Tooltip } from "antd";
+import {
+  Button,
+  Spin,
+  Table,
+  Tooltip,
+  Card,
+  Pagination,
+  Col,
+  Badge,
+} from "antd";
 import { UpdateCustomerMeter } from ".";
 import { Customer, getCustomers } from "../../features/customer/customerSlice";
 import Select from "react-select";
-import { IconDownload, IconRefresh } from "@tabler/icons-react";
+import {
+  IconDownload,
+  IconRefresh,
+  IconHash,
+  IconCalendar,
+  IconSettings,
+} from "@tabler/icons-react";
 import { CSVLink } from "react-csv";
+import { isMobile } from "react-device-detect";
 
 const CustomerMetersTable = () => {
   const {
@@ -30,6 +48,23 @@ const CustomerMetersTable = () => {
   const [customer_id, setLandlord] = useState<any>(null);
   const [meter_id, setMeter] = useState<any>(null);
   const [county_number, setCounty] = useState<any>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(10); // 10 cards per page for mobile
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean;
+    customerMeterId: string | null | undefined;
+    isSynced: boolean | null;
+    custId: string | null | undefined;
+    accountId: string | null | undefined;
+    meterId: string | null | undefined;
+  }>({
+    isOpen: false,
+    customerMeterId: null,
+    isSynced: null,
+    custId: null,
+    accountId: null,
+    meterId: null,
+  });
 
   const displayCounties = counties.map((county: any) => {
     return { value: county?.code, label: county?.name };
@@ -62,13 +97,24 @@ const CustomerMetersTable = () => {
       ),
       action: (
         <>
-          <UpdateCustomerMeter
-            id={item.id}
-            is_synced_to_stron={item.is_synced_to_stron}
-            CUST_ID={item?.Customer?.customer_number}
-            Account_ID={item?.account_id}
-            METER_ID={item?.Meter?.serial_number}
-          />
+          <Button
+            type="text"
+            size="small"
+            onClick={() => openModal(item)}
+            style={{
+              padding: "4px 8px",
+              minWidth: "40px",
+              minHeight: "40px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              border: "none",
+              boxShadow: "none",
+            }}
+            className="p-0"
+          >
+            <IconSettings width={16} className="text-primary" />
+          </Button>
         </>
       ),
     };
@@ -100,11 +146,6 @@ const CustomerMetersTable = () => {
       key: "landlord",
     },
     {
-      title: "Tenant",
-      dataIndex: "tenant",
-      key: "tenant",
-    },
-    {
       title: "Is Forwarded",
       dataIndex: "is_synced_to_stron",
       key: "is_synced_to_stron",
@@ -125,11 +166,11 @@ const CustomerMetersTable = () => {
     dispatch(getMeters(""));
     dispatch(getCustomers(""));
     dispatch(getCounties());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(getCustomerMeters());
-  }, [syncingCustomerMeterToStron]);
+  }, [dispatch, syncingCustomerMeterToStron]);
 
   useEffect(() => {
     let data = {
@@ -138,7 +179,7 @@ const CustomerMetersTable = () => {
       county_number: county_number?.value ? county_number?.value : "",
     };
     dispatch(getCustomerMeters(data));
-  }, [meter_id?.value, customer_id?.value, county_number?.value]);
+  }, [dispatch, meter_id?.value, customer_id?.value, county_number?.value]);
 
   const handleLandlordChange = (selectedOption: {
     value: string;
@@ -171,63 +212,262 @@ const CustomerMetersTable = () => {
     setMeter("");
   };
 
+  const openModal = (customerMeter: CustomerMeter) => {
+    console.log("Opening modal for customer meter:", customerMeter.id);
+    setModalState({
+      isOpen: true,
+      customerMeterId: customerMeter.id,
+      isSynced: Boolean(customerMeter.is_synced_to_stron),
+      custId: customerMeter?.Customer?.customer_number || null,
+      accountId: customerMeter?.account_id || null,
+      meterId: customerMeter?.Meter?.serial_number || null,
+    });
+  };
+
+  const closeModal = () => {
+    console.log("Closing modal");
+    setModalState({
+      isOpen: false,
+      customerMeterId: null,
+      isSynced: null,
+      custId: null,
+      accountId: null,
+      meterId: null,
+    });
+  };
+
+  // Mobile card component
+  const CustomerMeterCard = ({
+    customerMeterItem,
+  }: {
+    customerMeterItem: CustomerMeter;
+  }) => (
+    <Card
+      className="mb-3 shadow-sm"
+      style={{ borderRadius: "12px" }}
+      styles={{ body: { padding: "16px" } }}
+    >
+      <div className="d-flex justify-content-between align-items-start mb-3">
+        <div>
+          <h6 className="mb-1 fw-bold text-primary">
+            {`C${
+              customerMeterItem?.Meter?.county_number?.toString().length === 1
+                ? "00"
+                : "0"
+            }${customerMeterItem?.Meter?.county_number}-${
+              customerMeterItem?.Meter?.serial_number
+            }`}
+          </h6>
+          <small className="fw-bold text-muted">
+            Landlord:{" "}
+            {`${customerMeterItem?.Customer?.first_name} ${customerMeterItem?.Customer?.last_name}`}
+          </small>
+        </div>
+        <Badge
+          color={customerMeterItem.is_synced_to_stron ? "green" : "red"}
+          text={
+            customerMeterItem.is_synced_to_stron ? "Forwarded" : "Not Forwarded"
+          }
+        />
+      </div>
+
+      <div className="d-flex flex-column gap-2">
+        <Col span={24}>
+          <div className="d-flex align-items-center mb-3">
+            <IconCalendar size={16} className="text-warning me-2" />
+            <div>
+              <small className="text-muted d-block">Created</small>
+              <span className="fw-bold text-warning">
+                {moment(customerMeterItem.created_at).format("MMM DD, YYYY")}
+              </span>
+            </div>
+          </div>
+        </Col>
+      </div>
+
+      <div className="d-flex justify-content-end">
+        <Button
+          type="text"
+          size="small"
+          onClick={() => {
+            const originalCustomerMeter = customerMeters.find(
+              (cm) => cm.id === customerMeterItem.id
+            );
+            if (originalCustomerMeter) openModal(originalCustomerMeter);
+          }}
+          style={{
+            padding: "4px 8px",
+            minWidth: "40px",
+            minHeight: "40px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            border: "none",
+            boxShadow: "none",
+          }}
+          className="p-0"
+        >
+          <IconSettings width={16} className="text-primary" />
+        </Button>
+      </div>
+    </Card>
+  );
+
+  // Pagination logic for mobile
+  const getPaginatedCustomerMeters = () => {
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    return customerMeters.slice(startIndex, endIndex);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   return (
     <div className="mt-3">
-      <div className="d-flex justify-content-between mb-3">
-        <Select
-          value={meter_id}
-          onChange={(option) => handleMeterChange(option)}
-          options={displayMeters}
-          placeholder="Select a meter..."
-          className="col-md-2"
-        />
-        <Select
-          value={customer_id}
-          onChange={(option) => handleLandlordChange(option)}
-          options={displayLandlords}
-          placeholder="Select a landlord..."
-          className="col-md-2"
-        />
-
-        <Select
-          value={county_number}
-          onChange={(option) => handleCountyChange(option)}
-          options={displayCounties}
-          placeholder="Select county..."
-          className="col-md-2"
-        />
-        <div className="d-flex justify-content-center">
-          <CSVLink
-            data={downloadData}
-            target="_blank"
-            filename={
-              "Customer Meters" +
-              "_" +
-              moment(new Date()).format("DD/MM/YYYY HH:mm:ss") +
-              ".csv"
-            }
-          >
-            <Button type="dashed">
-              <span className="me-2">Download</span>
-              <span>
-                <IconDownload width={16} />
-              </span>
-            </Button>
-          </CSVLink>
-        </div>
-        <Tooltip title="refresh data">
-          <IconRefresh
-            className="text-primary cursor"
-            onClick={() => refresh()}
+      {/* Header Controls */}
+      <div
+        className={`d-flex ${
+          isMobile ? "flex-column" : "justify-content-between"
+        } mb-3`}
+      >
+        <div
+          className={`d-flex ${
+            isMobile ? "flex-column" : "align-items-center col-md-8"
+          } gap-3`}
+        >
+          <Select
+            value={meter_id}
+            onChange={(option) => handleMeterChange(option)}
+            options={displayMeters}
+            placeholder="Select a meter..."
+            className={isMobile ? "w-100" : "col-md-2"}
           />
-        </Tooltip>
+          <Select
+            value={customer_id}
+            onChange={(option) => handleLandlordChange(option)}
+            options={displayLandlords}
+            placeholder="Select a landlord..."
+            className={isMobile ? "w-100" : "col-md-2"}
+          />
+
+          {!isMobile && (
+            <Select
+              value={county_number}
+              onChange={(option) => handleCountyChange(option)}
+              options={displayCounties}
+              placeholder="Select county..."
+              className={isMobile ? "w-100" : "col-md-2"}
+            />
+          )}
+        </div>
+
+        <div
+          className={`d-flex ${
+            isMobile ? "flex-column" : "align-items-center col-md-4"
+          } gap-3`}
+        >
+          {!isMobile && (
+            <div className="d-flex justify-content-center">
+              <CSVLink
+                data={downloadData}
+                target="_blank"
+                filename={
+                  "Customer Meters" +
+                  "_" +
+                  moment(new Date()).format("DD/MM/YYYY HH:mm:ss") +
+                  ".csv"
+                }
+              >
+                <Button type="dashed" size={isMobile ? "small" : "middle"}>
+                  <span className="me-2">Download</span>
+                  <span>
+                    <IconDownload width={16} />
+                  </span>
+                </Button>
+              </CSVLink>
+            </div>
+          )}
+
+          <Tooltip title="refresh data">
+            <IconRefresh
+              className={`text-primary cursor ${isMobile ? "mt-2" : ""}`}
+              onClick={() => refresh()}
+              size={isMobile ? 20 : 24}
+            />
+          </Tooltip>
+        </div>
       </div>
+
+      {/* Content */}
       {loadingCustomerMeters ? (
-        <Spin />
+        <div className="text-center py-5">
+          <Spin size="large" />
+          <p className="mt-3 text-muted">Loading customer meters...</p>
+        </div>
       ) : (
         <>
-          <Table dataSource={dataSource} columns={columns} />
+          {isMobile ? (
+            // Mobile Card View
+            <div>
+              {getPaginatedCustomerMeters().length > 0 ? (
+                <>
+                  <div className="mb-3">
+                    {getPaginatedCustomerMeters().map(
+                      (customerMeterItem: CustomerMeter, index: number) => (
+                        <CustomerMeterCard
+                          key={`${customerMeterItem.id}-${index}`}
+                          customerMeterItem={customerMeterItem}
+                        />
+                      )
+                    )}
+                  </div>
+
+                  {customerMeters.length > pageSize && (
+                    <div className="text-center mt-4">
+                      <Pagination
+                        current={currentPage}
+                        total={customerMeters.length}
+                        pageSize={pageSize}
+                        onChange={handlePageChange}
+                        showSizeChanger={false}
+                        showQuickJumper={false}
+                        showTotal={(total, range) =>
+                          `${range[0]}-${range[1]} of ${total} customer meters`
+                        }
+                        size="small"
+                      />
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="text-center py-5">
+                  <IconHash size={48} className="text-muted mb-3" />
+                  <h5 className="text-muted">No customer meters found</h5>
+                  <p className="text-muted">
+                    Try selecting different filters or add new customer meters.
+                  </p>
+                </div>
+              )}
+            </div>
+          ) : (
+            // Desktop Table View
+            <Table dataSource={dataSource} columns={columns} />
+          )}
         </>
+      )}
+
+      {/* Global Modal */}
+      {modalState.isOpen && modalState.customerMeterId && (
+        <UpdateCustomerMeter
+          id={modalState.customerMeterId}
+          is_synced_to_stron={modalState.isSynced || false}
+          CUST_ID={modalState.custId || undefined}
+          Account_ID={modalState.accountId || undefined}
+          METER_ID={modalState.meterId || undefined}
+          onClose={closeModal}
+        />
       )}
     </div>
   );
