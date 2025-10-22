@@ -1,36 +1,34 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { Button, Spin, Table, Tooltip } from "antd";
-import { getTokens, Token } from "../../features/tokens/tokenSlice";
+import { Button, Spin, Table, Tooltip} from "antd";
+import {
+  getTokens,
+  Token,
+  sendTokensManually,
+} from "../../features/tokens/tokenSlice";
 import { IconDownload, IconRefresh } from "@tabler/icons-react";
 import { CSVLink } from "react-csv";
 import { getMeters, Meter } from "../../features/meter/meterSlice";
 import Select from "react-select";
-import { GenerateToken } from ".";
+import { GenerateToken, ResendTokenModal } from ".";
 
 const TokensTable = () => {
-  const { tokens, loadingTokens } = useSelector(
+  const { tokens, loadingTokens, resendingToken } = useSelector(
     (state: RootState) => state.token
   );
-  const {  generatingToken } = useSelector(
-    (state: RootState) => state.meter
-  );
+  const { generatingToken } = useSelector((state: RootState) => state.meter);
   const [meter_id, setMeter] = useState<any>(null);
 
   const { meters } = useSelector((state: RootState) => state.meter);
   const dispatch = useDispatch<AppDispatch>();
-
-  const dataSource = tokens.map((item: Token) => {
-    return {
-      ...item,
-      created_at: moment(item.created_at).format("MM/DD/YYYY"),
-      serial_number: item.Meter.serial_number,
-      amount: `KES ${item.amount}`,
-      total_units: `${item.total_units} KWh`,
-    };
-  });
+  const [isResendTokenModalOpen, setIsResendTokenModalOpen] = useState(false);
+  const [phone, setPhone] = useState<any>(null);
+  const [token, setToken] = useState<any>(null);
+  const [meter_number, setMeterNumber] = useState<any>(null);
 
   const downloadData = tokens.map((item: Token) => {
     return {
@@ -78,12 +76,62 @@ const TokensTable = () => {
       dataIndex: "created_at",
       key: "created_at",
     },
+    {
+      title: "Action",
+      dataIndex: "action",
+      key: "action",
+    },
   ];
+
+  const handleResendToken = (token: string, meter_number: string) => {
+    const data = {
+      token,
+      meter_number,
+      phone,
+    };
+    dispatch(sendTokensManually(data));
+    setIsResendTokenModalOpen(false);
+    setPhone("");
+    setToken("");
+    setMeterNumber("");
+  };
+
+  const handleCancelResendToken = () => {
+    setIsResendTokenModalOpen(false);
+  };
+
+  const dataSource = tokens.map((item: Token) => {
+    return {
+      ...item,
+      created_at: moment(item.created_at).format("MM/DD/YYYY"),
+      serial_number: item.Meter.serial_number,
+      amount: `KES ${item.amount}`,
+      total_units: `${item.total_units} KWh`,
+      action: (
+        <>
+          {resendingToken && item.token === token ? (
+            <Spin />
+          ) : (
+            <Button
+              type="primary"
+              onClick={() => {
+                setIsResendTokenModalOpen(true);
+                setToken(item.token);
+                setMeterNumber(item.Meter.serial_number);
+              }}
+            >
+              Resend
+            </Button>
+          )}
+        </>
+      ),
+    };
+  });
 
   useEffect(() => {
     dispatch(getTokens(meter_id?.value));
     dispatch(getMeters(""));
-  }, [meter_id?.value]);
+  }, [dispatch, meter_id?.value]);
 
   const handleMeterChange = (selectedOption: {
     value: string;
@@ -135,11 +183,20 @@ const TokensTable = () => {
           />
         </Tooltip>
       </div>
-      {(loadingTokens || generatingToken)? (
+      {loadingTokens || generatingToken ? (
         <Spin />
       ) : (
         <>
           <Table dataSource={dataSource} columns={columns} />
+          <ResendTokenModal
+            token={token}
+            meter_number={meter_number}
+            isResendTokenModalOpen={isResendTokenModalOpen}
+            handleCancelResendToken={handleCancelResendToken}
+            phone={phone}
+            setPhone={setPhone}
+            handleResendToken={handleResendToken}
+          />
         </>
       )}
     </div>

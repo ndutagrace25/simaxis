@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axiosInstance from "../../utils/axios";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import Swal from "sweetalert2";
@@ -21,12 +22,14 @@ interface TokenState {
   tokens: Token[];
   tokensError: string | null;
   loadingTokens: boolean;
+  resendingToken: boolean;
 }
 
 const initialState: TokenState = {
   tokens: [],
   tokensError: null,
   loadingTokens: false,
+  resendingToken: false,
 };
 
 const tokenSlice = createSlice({
@@ -43,6 +46,9 @@ const tokenSlice = createSlice({
     setLoadingTokens(state, action: PayloadAction<boolean>) {
       state.loadingTokens = action.payload;
     },
+    setResendingToken(state, action: PayloadAction<boolean>) {
+      state.resendingToken = action.payload;
+    },
   },
 });
 
@@ -51,6 +57,7 @@ export const {
   setTokenError,
   setLoadingTokens,
   setTokens,
+  setResendingToken,
 } = tokenSlice.actions;
 
 export default tokenSlice.reducer;
@@ -85,3 +92,24 @@ export const getTokens =
       dispatch(setLoadingTokens(false));
     }
   };
+
+  export const sendTokensManually =
+    (payload: any): AppThunk =>
+    async (dispatch) => {
+      dispatch(setResendingToken(true));
+      try {
+        const response = await axiosInstance.post(`/tokens/send-tokens-manually`, payload);
+        Swal.fire("Success", response.data.message, "success");
+        dispatch(setResendingToken(false));
+      } catch (error: any) {
+        dispatch(setResendingToken(false));
+        Swal.fire(
+          "Error",
+          error?.response?.data ? error.response.data.message : error.message,
+          "error"
+        );
+        dispatch(
+          setTokenError(error?.response?.data ? error.response.data.message : error.message)
+        );
+      }
+    };
