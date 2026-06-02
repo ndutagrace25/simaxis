@@ -1,7 +1,6 @@
 import { NavBar, NavDetails } from "../common";
 import meterbox from "../assets/meterbox.png";
 import { Button, Image } from "antd";
-import { isMobile } from "react-device-detect";
 import { Link } from "react-router-dom";
 
 const Home = () => {
@@ -10,51 +9,32 @@ const Home = () => {
       <NavBar>
         <NavDetails />
       </NavBar>
-      <div className="d-flex justify-content-center col-md-12">
-        <div className="d-flex justify-content-between bg-white col-md-6 p-3 shadow-sm rounded mt-3 flex-wrap mx-2">
-          <div className="col-md-6 ">
-            <Image
-              width={isMobile ? 300 : 400}
-              src={meterbox}
-              preview={false}
-              className="col-md-12"
-            />
+      <section className="hero-section">
+        <div className="hero-card">
+          <div className="hero-media">
+            <Image src={meterbox} preview={false} className="hero-image" />
           </div>
-          <div className="col-md-6 px-3">
-            <p className={`d-flex text-justify ${isMobile ? "mt-1" : "mt-5"}`}>
+          <div className="hero-copy">
+            <h1>Smarter Token Management For Modern Buildings</h1>
+            <p>
               We are thrilled to introduce a hassle-free solution to manage your
               electricity needs conveniently. Now, you can effortlessly top up
               your electricity tokens directly through Si-Maxis' user-friendly
               platform.
             </p>
-            <div className="d-flex justify-content-between">
+            <div className="hero-actions">
               <Link to="/login">
-                <Button
-                  type="primary"
-                  shape="round"
-                  className="bg-blue text-white fw-bold"
-                >
-                  Login
+                <Button type="primary" shape="round" className="btn-brand btn-brand-lg">
+                  Continue To Login
                 </Button>
               </Link>
-              <div>
-                <small className="small-font me-2">
-                  Don't have an account?
-                </small>
-                <Link to="/register">
-                  <Button
-                    type="primary"
-                    shape="round"
-                    className="bg-blue text-white fw-bold"
-                  >
-                    Register
-                  </Button>
-                </Link>
-              </div>
+              <small className="hero-note">
+                New accounts are created by authorized users after sign in.
+              </small>
             </div>
           </div>
         </div>
-      </div>
+      </section>
     </>
   );
 };

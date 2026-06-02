@@ -148,7 +148,7 @@ export const registerUser =
         payload
       );
       Swal.fire("Success", response.data.message, "success");
-      window.location.href = "/login";
+      window.location.href = "/my-account";
     } catch (error: any) {
       console.log(
         error?.response?.data

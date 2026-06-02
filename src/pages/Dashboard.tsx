@@ -3,7 +3,7 @@ import { Button } from "antd";
 import { NavBar, AccountTabs } from "../common";
 import { IconUserCircle } from "@tabler/icons-react";
 import { isMobile } from "react-device-detect";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { appSession } from "../utils/appStorage";
 import { AdminTabs } from ".";
 import { useEffect } from "react";
@@ -37,17 +37,22 @@ const Dashboard = () => {
   return (
     <>
       <NavBar>
-        <div className="navbar-nav ms-auto dlflex align-items-center">
-          <IconUserCircle className="text-blue me-2" />{" "}
-          <div className="me-3">
+        <div className="navbar-nav ms-auto d-flex align-items-center gap-2 py-2">
+          <IconUserCircle className="text-blue me-1" />
+          <div className="me-2 text-nowrap">
             <small>
               {user?.first_name} {user?.last_name} ({user?.role})
             </small>
           </div>
+          <Link to="/register">
+            <Button type="default" shape="round" className="btn-outline-brand">
+              Register User
+            </Button>
+          </Link>
           <Button
             type="primary"
             shape="round"
-            className="bg-blue text-white fw-bold"
+            className="btn-brand text-white fw-bold"
             onClick={() => {
               sessionStorage.clear();
               navigate("/");
@@ -57,14 +62,14 @@ const Dashboard = () => {
           </Button>
         </div>
       </NavBar>
-      <div className=" d-flex justify-content-center">
-        <div className={isMobile ? "col-12 px-1" : "col-5 p-3"}>
+      <div className="d-flex justify-content-center dashboard-shell">
+        <div className={isMobile ? "col-12 px-2" : "col-6 p-3"}>
           {(user?.role === "Tenant" || user?.role === "Landlord") && (
             <>
               {user?.is_verified ? (
                 <AccountTabs />
               ) : (
-                "Account awaiting approval"
+                <div className="awaiting-card">Account awaiting approval</div>
               )}
             </>
           )}
@@ -72,7 +77,7 @@ const Dashboard = () => {
       </div>
       {user?.is_verified &&
         (user?.role === "Super Admin" || user?.role === "System User") && (
-          <div className="bg-white mx-3 px-3 rounded">
+          <div className="dashboard-admin-wrap mx-3 px-3 rounded">
             <AdminTabs />
           </div>
         )}

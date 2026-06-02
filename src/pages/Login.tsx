@@ -1,7 +1,6 @@
 import { AppDispatch, RootState } from "../store";
 import { Button, Form, Input, type FormProps, Spin } from "antd";
 import { LockOutlined, PhoneOutlined } from "@ant-design/icons";
-import { Link } from "react-router-dom";
 import { NavBar, NavDetails } from "../common";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -32,18 +31,19 @@ const Login = () => {
       <NavBar>
         <NavDetails />
       </NavBar>
-      <div className="d-flex justify-content-center align-items-center">
+      <section className="auth-page">
         <Form
           name="basic"
-          style={{ maxWidth: 600 }}
+          style={{ maxWidth: 520 }}
           initialValues={{ remember: true }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
-          className="form-height shadow rounded p-3 mt-5 col-md-3 col-sm-3 bg-white col-10"
+          className="auth-card"
         >
-          <div className="text-center my-3">
-            <h5>Si-Maxis Meters Limited</h5>
+          <div className="auth-header">
+            <h2>Welcome Back</h2>
+            <p>Sign in to access your Si-Maxis meter operations dashboard.</p>
           </div>
           <Form.Item<FieldType>
             name="phone"
@@ -73,28 +73,27 @@ const Login = () => {
 
           <div className="col-12">
             {loggingLoading ? (
-              <Spin />
+              <div className="text-center py-2">
+                <Spin />
+              </div>
             ) : (
               <Button
                 type="primary"
                 htmlType="submit"
-                className=" mt-3 col-12 bg-blue"
+                className="btn-brand btn-brand-block"
               >
                 Login
               </Button>
             )}
           </div>
 
-          <div className="mb-3 mt-5 d-flex justify-content-between">
-            <div className="">
-              <Link to="/register">Register</Link>
-            </div>
-            <div className="text-center text-primary  d-flex justify-content-end ">
+          <div className="auth-footer">
+            <div className="text-center text-primary d-flex justify-content-end">
               <small className="cursor">Forgot password</small>
             </div>
           </div>
         </Form>
-      </div>
+      </section>
     </>
   );
 };

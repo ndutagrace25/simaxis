@@ -1,8 +1,6 @@
 import { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
-// import { Avatar } from "antd";
-import { isMobile } from "react-device-detect";
 
 interface Props {
   children: ReactNode;
@@ -10,11 +8,11 @@ interface Props {
 
 const NavBar = ({ children }: Props) => {
   return (
-    <div className="">
-      <nav className="navbar navbar-expand-lg bg-white shadow-sm">
-        <div className="container-fluid ">
-          <Link className="navbar-brand" to="/">
-            <img src={logo} className="rounded" width={!isMobile ? 100 : 80} />
+    <div className="site-nav-wrap">
+      <nav className="navbar navbar-expand-lg site-navbar">
+        <div className="container-fluid site-nav-container">
+          <Link className="navbar-brand site-brand" to="/">
+            <img src={logo} className="rounded" width={88} alt="Si-Maxis logo" />
           </Link>
           <button
             className="navbar-toggler"
@@ -27,7 +25,7 @@ const NavBar = ({ children }: Props) => {
           >
             <span className="navbar-toggler-icon"></span>
           </button>
-          <div className="collapse navbar-collapse" id="navbarNav">
+          <div className="collapse navbar-collapse site-navbar-collapse" id="navbarNav">
             {children}
           </div>
         </div>

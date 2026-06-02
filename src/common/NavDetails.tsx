@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const NavDetails = () => {
   return (
-    <ul className="navbar-nav ms-auto">
+    <ul className="navbar-nav ms-auto site-nav-links">
       <li className="nav-item">
         <Link className="nav-link active" aria-current="page" to="/">
           Home
@@ -18,23 +18,10 @@ const NavDetails = () => {
         <Link to="/login" className="nav-link ">
           <Button
             type="primary"
-            size="small"
             shape="round"
-            className="bg-blue text-white fw-bold"
+            className="btn-brand text-white fw-semibold"
           >
-            <small>Login</small>
-          </Button>
-        </Link>
-      </li>
-      <li className="nav-item">
-        <Link to="/register" className="nav-link ">
-          <Button
-            type="primary"
-            size="small"
-            shape="round"
-            className="bg-blue text-white fw-bold"
-          >
-            <small>Register</small>
+            Login
           </Button>
         </Link>
       </li>
