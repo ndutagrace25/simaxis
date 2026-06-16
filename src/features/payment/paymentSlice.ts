@@ -23,6 +23,9 @@ interface RevenueDataPoint {
   period: string;
   revenue: number;
   date: string;
+  kplc?: number;
+  siMaxis?: number;
+  esperanza?: number;
 }
 
 interface PaymentState {

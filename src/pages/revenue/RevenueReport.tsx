@@ -21,6 +21,12 @@ interface ChartDataItem {
   fullDate: string;
   revenue: number;
   formattedRevenue: string;
+  kplc: number;
+  siMaxis: number;
+  esperanza: number;
+  formattedKplc: string;
+  formattedSiMaxis: string;
+  formattedEsperanza: string;
 }
 
 type FilterType = "daily" | "monthly" | "yearly";
@@ -45,12 +51,23 @@ const RevenueChart: React.FC = () => {
   );
 
   // Transform revenue data for chart
-  const chartData: ChartDataItem[] = revenue.map((item) => ({
-    period: item.period,
-    fullDate: item.date,
-    revenue: item.revenue,
-    formattedRevenue: `KES ${item.revenue.toLocaleString()}`,
-  }));
+  const chartData: ChartDataItem[] = revenue.map((item) => {
+    const year = parseInt(item.date.substring(0, 4));
+    const isSplitYear = year >= 2025;
+    
+    return {
+      period: item.period,
+      fullDate: item.date,
+      revenue: isSplitYear ? 0 : item.revenue,
+      formattedRevenue: `KES ${item.revenue.toLocaleString()}`,
+      kplc: isSplitYear ? (item.kplc || 0) : 0,
+      siMaxis: isSplitYear ? (item.siMaxis || 0) : 0,
+      esperanza: isSplitYear ? (item.esperanza || 0) : 0,
+      formattedKplc: `KES ${(item.kplc || 0).toLocaleString()}`,
+      formattedSiMaxis: `KES ${(item.siMaxis || 0).toLocaleString()}`,
+      formattedEsperanza: `KES ${(item.esperanza || 0).toLocaleString()}`,
+    };
+  });
 
   // Update chart data when filter type or date changes
   useEffect(() => {
@@ -76,25 +93,22 @@ const RevenueChart: React.FC = () => {
     }
   };
 
-  // Calculate total revenue
-  const totalRevenue: number = chartData.reduce(
+  // Calculate total revenue from original data
+  const totalRevenue: number = revenue.reduce(
     (sum, item) => sum + item.revenue,
     0
   );
 
-  // Get bar color based on filter type
-  const getBarColor = (): string => {
-    switch (filterType) {
-      case "daily":
-        return "#007bff";
-      case "monthly":
-        return "#28a745";
-      case "yearly":
-        return "#ffc107";
-      default:
-        return "#007bff";
-    }
-  };
+  // Calculate split totals from original data
+  const totalKplc: number = revenue.reduce((sum, item) => sum + (item.kplc || 0), 0);
+  const totalSiMaxis: number = revenue.reduce(
+    (sum, item) => sum + (item.siMaxis || 0),
+    0
+  );
+  const totalEsperanza: number = revenue.reduce(
+    (sum, item) => sum + (item.esperanza || 0),
+    0
+  );
 
   // Custom tooltip for the chart
   const CustomTooltip: React.FC<CustomTooltipProps> = ({
@@ -106,7 +120,7 @@ const RevenueChart: React.FC = () => {
       const data = payload[0].payload;
       return (
         <div className="bg-white p-3 border rounded shadow">
-          <p className="mb-1 font-weight-bold">
+          <p className="mb-2 font-weight-bold">
             {`${
               filterType === "daily"
                 ? "Day"
@@ -115,7 +129,10 @@ const RevenueChart: React.FC = () => {
                 : "Year"
             }: ${label}`}
           </p>
-          <p className="mb-0 text-success">{`Revenue: ${data.formattedRevenue}`}</p>
+          <p className="mb-1 text-success">{`Total: ${data.formattedRevenue}`}</p>
+          <p className="mb-1" style={{ color: "#8b5cf6" }}>{`KPLC (90%): ${data.formattedKplc}`}</p>
+          <p className="mb-1" style={{ color: "#06b6d4" }}>{`SI-MAXIS (8.5%): ${data.formattedSiMaxis}`}</p>
+          <p className="mb-0" style={{ color: "#f59e0b" }}>{`ESPERANZA (1.5%): ${data.formattedEsperanza}`}</p>
         </div>
       );
     }
@@ -220,28 +237,42 @@ const RevenueChart: React.FC = () => {
               </div>
 
               {/* Summary Cards */}
-              <div className="row mb-4">
-                <div className="col-md-4">
-                  <div className="card bg-success text-white">
-                    <div className="card-body">
-                      <h5 className="card-title">Total Revenue</h5>
-                      <h3 className="mb-0">KES {totalRevenue.toLocaleString()}</h3>
+              <div className="row mb-4 g-3">
+                <div className="col-lg-3 col-md-6 col-sm-12">
+                  <div className="card bg-success text-white h-100">
+                    <div className="card-body p-3">
+                      <h6 className="card-title mb-2 fs-6">Total Revenue</h6>
+                      <div className="fs-7 fw-bold">KES {totalRevenue.toLocaleString()}</div>
                     </div>
                   </div>
                 </div>
-                <div className="col-md-4">
-                  <div className="card bg-info text-white">
-                    <div className="card-body">
-                      <h5 className="card-title">Period</h5>
-                      <h6 className="mb-0">{getCurrentPeriodLabel()}</h6>
+                <div className="col-lg-3 col-md-6 col-sm-12">
+                  <div className="card text-white h-100" style={{ backgroundColor: "#8b5cf6" }}>
+                    <div className="card-body p-3">
+                      <h6 className="card-title mb-2 fs-6">KPLC (90%)</h6>
+                      <div className="fs-7 fw-bold">
+                        KES {totalKplc.toLocaleString()}
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div className="col-md-4">
-                  <div className="card bg-warning text-white">
-                    <div className="card-body">
-                      <h5 className="card-title">Data Points</h5>
-                      <h3 className="mb-0">{chartData.length}</h3>
+                <div className="col-lg-3 col-md-6 col-sm-12">
+                  <div className="card text-white h-100" style={{ backgroundColor: "#06b6d4" }}>
+                    <div className="card-body p-3">
+                      <h6 className="card-title mb-2 fs-6">SI-MAXIS (8.5%)</h6>
+                      <div className="fs-7 fw-bold">
+                        KES {totalSiMaxis.toLocaleString()}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-lg-3 col-md-6 col-sm-12">
+                  <div className="card text-white h-100" style={{ backgroundColor: "#f59e0b" }}>
+                    <div className="card-body p-3">
+                      <h6 className="card-title mb-2 fs-6">ESPERANZA (1.5%)</h6>
+                      <div className="fs-7 fw-bold">
+                        KES {totalEsperanza.toLocaleString()}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -292,12 +323,27 @@ const RevenueChart: React.FC = () => {
                             <Legend />
                             <Bar
                               dataKey="revenue"
-                              fill={getBarColor()}
-                              name={`${
-                                filterType.charAt(0).toUpperCase() +
-                                filterType.slice(1)
-                              } Revenue`}
+                              fill="#007bff"
+                              name="Revenue (2024)"
                               radius={[4, 4, 0, 0]}
+                            />
+                            <Bar
+                              dataKey="kplc"
+                              fill="#8b5cf6"
+                              name="KPLC (90%)"
+                              stackId="a"
+                            />
+                            <Bar
+                              dataKey="siMaxis"
+                              fill="#06b6d4"
+                              name="SI-MAXIS (8.5%)"
+                              stackId="a"
+                            />
+                            <Bar
+                              dataKey="esperanza"
+                              fill="#f59e0b"
+                              name="ESPERANZA (1.5%)"
+                              stackId="a"
                             />
                           </BarChart>
                         </ResponsiveContainer>
@@ -326,8 +372,10 @@ const RevenueChart: React.FC = () => {
                                   ? "Month"
                                   : "Year"}
                               </th>
-                              <th>Revenue</th>
-                              <th>Percentage of Total</th>
+                              <th>Total Revenue</th>
+                              <th style={{ color: "#8b5cf6" }}>KPLC (90%)</th>
+                              <th style={{ color: "#06b6d4" }}>SI-MAXIS (8.5%)</th>
+                              <th style={{ color: "#f59e0b" }}>ESPERANZA (1.5%)</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -338,31 +386,14 @@ const RevenueChart: React.FC = () => {
                                   <td className="text-success fw-bold">
                                     {item.formattedRevenue}
                                   </td>
-                                  <td>
-                                    <div className="d-flex align-items-center">
-                                      <div
-                                        className="progress flex-grow-1 me-2"
-                                        style={{ height: "20px" }}
-                                      >
-                                        <div
-                                          className="progress-bar bg-success"
-                                          role="progressbar"
-                                          style={{
-                                            width: `${(
-                                              (item.revenue / totalRevenue) *
-                                              100
-                                            ).toFixed(1)}%`,
-                                          }}
-                                        ></div>
-                                      </div>
-                                      <small className="text-muted">
-                                        {(
-                                          (item.revenue / totalRevenue) *
-                                          100
-                                        ).toFixed(1)}
-                                        %
-                                      </small>
-                                    </div>
+                                  <td style={{ color: "#8b5cf6" }} className="fw-bold">
+                                    {item.formattedKplc}
+                                  </td>
+                                  <td style={{ color: "#06b6d4" }} className="fw-bold">
+                                    {item.formattedSiMaxis}
+                                  </td>
+                                  <td style={{ color: "#f59e0b" }} className="fw-bold">
+                                    {item.formattedEsperanza}
                                   </td>
                                 </tr>
                               )
