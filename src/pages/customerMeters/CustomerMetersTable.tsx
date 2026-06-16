@@ -57,6 +57,7 @@ const CustomerMetersTable = () => {
     custId: string | null | undefined;
     accountId: string | null | undefined;
     meterId: string | null | undefined;
+    categories: string | null | undefined;
   }>({
     isOpen: false,
     customerMeterId: null,
@@ -64,6 +65,7 @@ const CustomerMetersTable = () => {
     custId: null,
     accountId: null,
     meterId: null,
+    categories: null,
   });
 
   const displayCounties = counties.map((county: any) => {
@@ -82,6 +84,7 @@ const CustomerMetersTable = () => {
   const dataSource = customerMeters.map((item: CustomerMeter) => {
     return {
       ...item,
+      categories: item.categories || "Domestic",
       created_at: moment(item.created_at).format("MM/DD/YYYY"),
       landlord: `${item?.Customer?.first_name} ${item?.Customer?.last_name}`,
       serial_number: `${
@@ -122,6 +125,7 @@ const CustomerMetersTable = () => {
 
   const downloadData = customerMeters.map((item: CustomerMeter) => {
     return {
+      category: item.categories || "Domestic",
       created_at: moment(item.created_at).format("MM/DD/YYYY"),
       landlord: `${item?.Customer?.first_name} ${item?.Customer?.last_name}`,
       serial_number: `${
@@ -144,6 +148,11 @@ const CustomerMetersTable = () => {
       title: "Landlord/Agent",
       dataIndex: "landlord",
       key: "landlord",
+    },
+    {
+      title: "Category",
+      dataIndex: "categories",
+      key: "categories",
     },
     {
       title: "Is Forwarded",
@@ -221,6 +230,7 @@ const CustomerMetersTable = () => {
       custId: customerMeter?.Customer?.customer_number || null,
       accountId: customerMeter?.account_id || null,
       meterId: customerMeter?.Meter?.serial_number || null,
+      categories: customerMeter?.categories || "Domestic",
     });
   };
 
@@ -233,6 +243,7 @@ const CustomerMetersTable = () => {
       custId: null,
       accountId: null,
       meterId: null,
+      categories: null,
     });
   };
 
@@ -272,6 +283,17 @@ const CustomerMetersTable = () => {
       </div>
 
       <div className="d-flex flex-column gap-2">
+        <Col span={24}>
+          <div className="d-flex align-items-center mb-3">
+            <IconHash size={16} className="text-info me-2" />
+            <div>
+              <small className="text-muted d-block">Category</small>
+              <span className="fw-bold text-info">
+                {customerMeterItem.categories || "Domestic"}
+              </span>
+            </div>
+          </div>
+        </Col>
         <Col span={24}>
           <div className="d-flex align-items-center mb-3">
             <IconCalendar size={16} className="text-warning me-2" />
@@ -466,6 +488,7 @@ const CustomerMetersTable = () => {
           CUST_ID={modalState.custId || undefined}
           Account_ID={modalState.accountId || undefined}
           METER_ID={modalState.meterId || undefined}
+          Categories={modalState.categories || undefined}
           onClose={closeModal}
         />
       )}

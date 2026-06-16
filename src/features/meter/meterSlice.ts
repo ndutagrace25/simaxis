@@ -25,6 +25,7 @@ export interface CustomerMeter {
   id?: string;
   customer_id?: string;
   meter_id?: string;
+  categories?: string;
   is_synced_to_stron?: boolean | ReactElement;
   account_id?: string;
   created_at?: string;
@@ -538,6 +539,7 @@ export const syncCustomerMeter =
     Account_ID: string | undefined;
     CUST_ID: string | undefined;
     METER_ID: string | undefined;
+    Categories: string;
   }): AppThunk =>
   async (dispatch) => {
     dispatch(setSyncingCustomerMeters(true));
@@ -555,7 +557,7 @@ export const syncCustomerMeter =
         "error"
       );
       dispatch(
-        setSyncingCustomerMeters(
+        setSyncCustomerMetersError(
           error?.response?.data ? error.response.data.message : error.message
         )
       );

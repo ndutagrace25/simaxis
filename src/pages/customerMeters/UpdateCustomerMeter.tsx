@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button, Modal, Spin } from "antd";
 import { useDispatch, useSelector } from "react-redux";
+import Select from "react-select";
 import { AppDispatch, RootState } from "../../store";
 
 import { syncCustomerMeter } from "../../features/meter/meterSlice";
@@ -11,6 +12,7 @@ const UpdateCustomerMeter = ({
   id,
   CUST_ID,
   Account_ID,
+  Categories,
   onClose,
 }: {
   METER_ID: string | undefined;
@@ -18,13 +20,24 @@ const UpdateCustomerMeter = ({
   id: string | undefined;
   CUST_ID: string | undefined;
   Account_ID: string | undefined;
+  Categories?: string;
   onClose?: () => void;
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState({
+    value: Categories || "Domestic",
+    label: Categories || "Domestic",
+  });
   const { syncingCustomerMeterToStron } = useSelector(
     (state: RootState) => state.meter
   );
   const dispatch = useDispatch<AppDispatch>();
+
+  const categoryOptions = [
+    { value: "Domestic", label: "Domestic" },
+    { value: "TIER ONE", label: "TIER ONE" },
+    { value: "TIER TWO", label: "TIER TWO" },
+  ];
 
   const handleOk = () => {
     if (onClose) {
@@ -56,31 +69,44 @@ const UpdateCustomerMeter = ({
           className: "hide-onPrint",
         }}
       >
-        <div className="d-flex justify-content-between">
-          {!is_synced_to_stron && (
-            <>
-              {syncingCustomerMeterToStron ? (
-                <Spin />
-              ) : (
-                <Button
-                  className="bg-success text-white my-3"
-                  size="small"
-                  onClick={() => {
-                    dispatch(
-                      syncCustomerMeter({
-                        id,
-                        Account_ID: `AC-${Account_ID}`,
-                        CUST_ID: `CTS-${CUST_ID}`,
-                        METER_ID,
-                      })
-                    );
-                  }}
-                >
-                  Forward to Stron
-                </Button>
-              )}
-            </>
-          )}
+        <div className="d-flex flex-column gap-3">
+          <div>
+            <label className="form-label fw-semibold mb-2">Category</label>
+            <Select
+              value={selectedCategory}
+              onChange={(selected) => {
+                if (selected) {
+                  setSelectedCategory(selected);
+                }
+              }}
+              options={categoryOptions}
+              placeholder="Select category"
+            />
+          </div>
+
+          <div className="d-flex justify-content-between align-items-center">
+            {syncingCustomerMeterToStron ? (
+              <Spin />
+            ) : (
+              <Button
+                className="bg-success text-white my-3"
+                size="small"
+                onClick={() => {
+                  dispatch(
+                    syncCustomerMeter({
+                      id,
+                      Account_ID: `AC-${Account_ID}`,
+                      CUST_ID: `CTS-${CUST_ID}`,
+                      METER_ID,
+                      Categories: selectedCategory.value,
+                    })
+                  );
+                }}
+              >
+                {is_synced_to_stron ? "Update Category" : "Forward to Stron"}
+              </Button>
+            )}
+          </div>
         </div>
       </Modal>
     </>
