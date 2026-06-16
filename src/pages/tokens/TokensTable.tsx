@@ -2,11 +2,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store";
+import axiosInstance from "../../utils/axios";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { Button, Spin, Table, Tooltip, Card, Pagination, Row, Col } from "antd";
 import {
   getTokens,
+  setTokenPagination,
   Token,
   sendTokensManually,
 } from "../../features/tokens/tokenSlice";
@@ -18,14 +20,21 @@ import {
   IconBolt,
   IconHash,
 } from "@tabler/icons-react";
-import { CSVLink } from "react-csv";
 import { getMeters, Meter } from "../../features/meter/meterSlice";
 import Select from "react-select";
 import { GenerateToken, ResendTokenModal } from ".";
 import { isMobile } from "react-device-detect";
+import Swal from "sweetalert2";
 
 const TokensTable = () => {
-  const { tokens, loadingTokens, resendingToken } = useSelector(
+  const {
+    tokens,
+    loadingTokens,
+    resendingToken,
+    totalTokens,
+    currentPage,
+    pageSize,
+  } = useSelector(
     (state: RootState) => state.token
   );
   const { generatingToken } = useSelector((state: RootState) => state.meter);
@@ -38,18 +47,8 @@ const TokensTable = () => {
   const [token, setToken] = useState<any>(null);
   const [token_id, setTokenId] = useState<any>(null);
   const [meter_number, setMeterNumber] = useState<any>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(10); // 6 cards per page for mobile
-
-  const downloadData = tokens.map((item: Token) => {
-    return {
-      created_at: moment(item.created_at).format("MM/DD/YYYY"),
-      meter_number: item.Meter.serial_number,
-      amount: item.amount,
-      total_units: item.total_units,
-      tokens: item.token,
-    };
-  });
+  const [tokenPage, setTokenPage] = useState(1);
+  const [downloadingCsv, setDownloadingCsv] = useState(false);
 
   const displayMeters = meters.map((meter: Meter) => {
     return { value: meter?.id, label: meter?.serial_number };
@@ -147,20 +146,92 @@ const TokensTable = () => {
   });
 
   useEffect(() => {
-    dispatch(getTokens(meter_id?.value));
+    dispatch(
+      getTokens({
+        meterId: meter_id?.value || "",
+        page: tokenPage,
+        limit: pageSize,
+      })
+    );
+  }, [dispatch, meter_id?.value, pageSize, tokenPage]);
+
+  useEffect(() => {
     dispatch(getMeters(""));
-  }, [dispatch, meter_id?.value]);
+  }, [dispatch]);
 
   const handleMeterChange = (selectedOption: {
     value: string;
     label: string;
   }) => {
     setMeter(selectedOption);
+    setTokenPage(1);
+    dispatch(setTokenPagination({ total: totalTokens, page: 1, limit: pageSize }));
   };
 
   const refresh = () => {
-    dispatch(getTokens(""));
-    setMeter("");
+    setMeter(null);
+    setTokenPage(1);
+    dispatch(setTokenPagination({ total: totalTokens, page: 1, limit: pageSize }));
+  };
+
+  const handleDownloadCsv = async () => {
+    setDownloadingCsv(true);
+
+    try {
+      const params = new URLSearchParams();
+
+      if (meter_id?.value) {
+        params.set("meter_id", meter_id.value);
+      }
+
+      params.set("export_all", "true");
+
+      const response = await axiosInstance.get(`/tokens?${params.toString()}`);
+      const exportTokens: Token[] = response.data.tokens || [];
+
+      if (!exportTokens.length) {
+        Swal.fire("Info", "No tokens available for the selected filter.", "info");
+        return;
+      }
+
+      const headers = ["Date Created", "Meter Number", "Amount", "Units", "Token"];
+      const rows = exportTokens.map((item: Token) => [
+        moment(item.created_at).format("MM/DD/YYYY"),
+        item.Meter.serial_number,
+        item.amount,
+        item.total_units,
+        item.token,
+      ]);
+
+      const csvContent = [headers, ...rows]
+        .map((row) =>
+          row
+            .map((value) => `"${String(value ?? "").replace(/"/g, '""')}"`)
+            .join(",")
+        )
+        .join("\n");
+
+      const blob = new Blob([csvContent], {
+        type: "text/csv;charset=utf-8;",
+      });
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download =
+        "Tokens_" + moment(new Date()).format("DD-MM-YYYY_HH-mm-ss") + ".csv";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (error: any) {
+      Swal.fire(
+        "Error",
+        error?.response?.data ? error.response.data.message : error.message,
+        "error"
+      );
+    } finally {
+      setDownloadingCsv(false);
+    }
   };
 
   // Mobile card component
@@ -237,15 +308,8 @@ const TokensTable = () => {
     </Card>
   );
 
-  // Pagination logic for mobile
-  const getPaginatedTokens = () => {
-    const startIndex = (currentPage - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    return tokens.slice(startIndex, endIndex);
-  };
-
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+    setTokenPage(page);
   };
 
   return (
@@ -275,23 +339,17 @@ const TokensTable = () => {
 
           {!isMobile && (
             <div className="d-flex justify-content-center">
-              <CSVLink
-                data={downloadData}
-                target="_blank"
-                filename={
-                  "Tokens" +
-                  "_" +
-                  moment(new Date()).format("DD/MM/YYYY HH:mm:ss") +
-                  ".csv"
-                }
+              <Button
+                type="dashed"
+                size={isMobile ? "small" : "middle"}
+                loading={downloadingCsv}
+                onClick={handleDownloadCsv}
               >
-                <Button type="dashed" size={isMobile ? "small" : "middle"}>
-                  <span className="me-2">Download</span>
-                  <span>
-                    <IconDownload width={16} />
-                  </span>
-                </Button>
-              </CSVLink>
+                <span className="me-2">Download</span>
+                <span>
+                  <IconDownload width={16} />
+                </span>
+              </Button>
             </div>
           )}
 
@@ -316,24 +374,19 @@ const TokensTable = () => {
           {isMobile ? (
             // Mobile Card View
             <div>
-              {getPaginatedTokens().length > 0 ? (
+              {tokens.length > 0 ? (
                 <>
                   <div className="mb-3">
-                    {getPaginatedTokens().map(
-                      (tokenItem: Token, index: number) => (
-                        <TokenCard
-                          key={`${tokenItem.id}-${index}`}
-                          tokenItem={tokenItem}
-                        />
-                      )
-                    )}
+                    {tokens.map((tokenItem: Token) => (
+                      <TokenCard key={tokenItem.id} tokenItem={tokenItem} />
+                    ))}
                   </div>
 
-                  {tokens.length > pageSize && (
+                  {totalTokens > pageSize && (
                     <div className="text-center mt-4">
                       <Pagination
                         current={currentPage}
-                        total={tokens.length}
+                        total={totalTokens}
                         pageSize={pageSize}
                         onChange={handlePageChange}
                         showSizeChanger={false}
@@ -358,7 +411,18 @@ const TokensTable = () => {
             </div>
           ) : (
             // Desktop Table View
-            <Table dataSource={dataSource} columns={columns} />
+            <Table
+              rowKey="id"
+              dataSource={dataSource}
+              columns={columns}
+              pagination={{
+                current: currentPage,
+                total: totalTokens,
+                pageSize,
+                showSizeChanger: false,
+                onChange: handlePageChange,
+              }}
+            />
           )}
 
           <ResendTokenModal
