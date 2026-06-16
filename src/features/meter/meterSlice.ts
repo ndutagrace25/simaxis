@@ -504,14 +504,26 @@ export const getCustomerMeters =
     dispatch(setLoadingCustomerMeters(true));
 
     let url = `/customer-meter`;
-    if (payload?.customer_id && !payload?.county_number) {
-      url += `?customer_id=${payload.customer_id}`;
+    const params = new URLSearchParams();
+
+    if (payload?.customer_id) {
+      params.set("customer_id", payload.customer_id);
     }
+
     if (payload?.meter_id) {
-      url += `?meter_id=${payload.meter_id}`;
+      params.set("meter_id", payload.meter_id);
     }
-    if (payload?.customer_id && payload?.county_number) {
-      url += `?customer_id=${payload.customer_id}&county_number=${payload.county_number}`;
+
+    if (payload?.county_number) {
+      params.set("county_number", payload.county_number);
+    }
+
+    if (payload?.categories) {
+      params.set("categories", payload.categories);
+    }
+
+    if (params.toString()) {
+      url += `?${params.toString()}`;
     }
     try {
       const response = await axiosInstance.get(url);

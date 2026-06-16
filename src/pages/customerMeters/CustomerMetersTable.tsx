@@ -48,6 +48,7 @@ const CustomerMetersTable = () => {
   const [customer_id, setLandlord] = useState<any>(null);
   const [meter_id, setMeter] = useState<any>(null);
   const [county_number, setCounty] = useState<any>(null);
+  const [category, setCategory] = useState<any>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10); // 10 cards per page for mobile
   const [modalState, setModalState] = useState<{
@@ -71,6 +72,13 @@ const CustomerMetersTable = () => {
   const displayCounties = counties.map((county: any) => {
     return { value: county?.code, label: county?.name };
   });
+
+  const displayCategories = [
+    { value: "Domestic", label: "Domestic (31.74)" },
+    { value: "TIER ONE", label: "TIER ONE (45.74)" },
+    { value: "TIER TWO", label: "TIER TWO (35.74)" },
+  ];
+
   const displayLandlords = customers.map((landlord: Customer) => {
     return {
       value: landlord?.id,
@@ -194,9 +202,10 @@ const CustomerMetersTable = () => {
       meter_id: meter_id?.value ? meter_id?.value : "",
       customer_id: customer_id?.value ? customer_id?.value : "",
       county_number: county_number?.value ? county_number?.value : "",
+      categories: category?.value ? category?.value : "",
     };
     dispatch(getCustomerMeters(data));
-  }, [dispatch, meter_id?.value, customer_id?.value, county_number?.value]);
+  }, [dispatch, meter_id?.value, customer_id?.value, county_number?.value, category?.value]);
 
   const handleLandlordChange = (selectedOption: {
     value: string;
@@ -222,11 +231,19 @@ const CustomerMetersTable = () => {
     setMeter("");
   };
 
+  const handleCategoryChange = (selectedOption: {
+    value: string;
+    label: string;
+  }) => {
+    setCategory(selectedOption);
+  };
+
   const refresh = () => {
     dispatch(getCustomerMeters());
     setLandlord("");
     setCounty("");
     setMeter("");
+    setCategory("");
   };
 
   const openModal = (customerMeter: CustomerMeter) => {
@@ -368,30 +385,51 @@ const CustomerMetersTable = () => {
             isMobile ? "flex-column" : "align-items-center col-md-8"
           } gap-3`}
         >
-          <Select
-            value={meter_id}
-            onChange={(option) => handleMeterChange(option)}
-            options={displayMeters}
-            placeholder="Select a meter..."
-            className={isMobile ? "w-100" : "col-md-2"}
-          />
-          <Select
-            value={customer_id}
-            onChange={(option) => handleLandlordChange(option)}
-            options={displayLandlords}
-            placeholder="Select a landlord..."
-            className={isMobile ? "w-100" : "col-md-2"}
-          />
+          <div className={isMobile ? "w-100" : "col-md-2"}>
+            <small className="text-muted d-block mb-1">Meter</small>
+            <Select
+              value={meter_id}
+              onChange={(option) => handleMeterChange(option)}
+              options={displayMeters}
+              placeholder="Select a meter..."
+              className="w-100"
+            />
+          </div>
+
+          <div className={isMobile ? "w-100" : "col-md-2"}>
+            <small className="text-muted d-block mb-1">Landlord</small>
+            <Select
+              value={customer_id}
+              onChange={(option) => handleLandlordChange(option)}
+              options={displayLandlords}
+              placeholder="Select a landlord..."
+              className="w-100"
+            />
+          </div>
 
           {!isMobile && (
-            <Select
-              value={county_number}
-              onChange={(option) => handleCountyChange(option)}
-              options={displayCounties}
-              placeholder="Select county..."
-              className={isMobile ? "w-100" : "col-md-2"}
-            />
+            <div className="col-md-2">
+              <small className="text-muted d-block mb-1">County</small>
+              <Select
+                value={county_number}
+                onChange={(option) => handleCountyChange(option)}
+                options={displayCounties}
+                placeholder="Select county..."
+                className="w-100"
+              />
+            </div>
           )}
+
+          <div className={isMobile ? "w-100" : "col-md-2"}>
+            <small className="text-muted d-block mb-1">Category</small>
+            <Select
+              value={category}
+              onChange={(option) => handleCategoryChange(option)}
+              options={displayCategories}
+              placeholder="Select Category..."
+              className="w-100"
+            />
+          </div>
         </div>
 
         <div
@@ -399,8 +437,8 @@ const CustomerMetersTable = () => {
             isMobile ? "flex-column" : "align-items-center col-md-4"
           } gap-3`}
         >
-          {!isMobile && (
-            <div className="d-flex justify-content-center">
+          {isMobile ? (
+            <div className="d-flex w-100 gap-2">
               <CSVLink
                 data={downloadData}
                 target="_blank"
@@ -410,24 +448,47 @@ const CustomerMetersTable = () => {
                   moment(new Date()).format("DD/MM/YYYY HH:mm:ss") +
                   ".csv"
                 }
+                className="flex-grow-1"
               >
-                <Button type="dashed" size={isMobile ? "small" : "middle"}>
+                <Button type="dashed" className="w-100">
                   <span className="me-2">Download</span>
-                  <span>
-                    <IconDownload width={16} />
-                  </span>
+                  <IconDownload width={16} />
                 </Button>
               </CSVLink>
+              <Button type="default" className="flex-grow-1" onClick={() => refresh()}>
+                <span className="me-2">Refresh</span>
+                <IconRefresh width={16} />
+              </Button>
             </div>
-          )}
+          ) : (
+            <>
+              <div className="d-flex justify-content-center">
+                <CSVLink
+                  data={downloadData}
+                  target="_blank"
+                  filename={
+                    "Customer Meters" +
+                    "_" +
+                    moment(new Date()).format("DD/MM/YYYY HH:mm:ss") +
+                    ".csv"
+                  }
+                >
+                  <Button type="dashed" size="middle">
+                    <span className="me-2">Download</span>
+                    <IconDownload width={16} />
+                  </Button>
+                </CSVLink>
+              </div>
 
-          <Tooltip title="refresh data">
-            <IconRefresh
-              className={`text-primary cursor ${isMobile ? "mt-2" : ""}`}
-              onClick={() => refresh()}
-              size={isMobile ? 20 : 24}
-            />
-          </Tooltip>
+              <Tooltip title="refresh data">
+                <IconRefresh
+                  className="text-primary cursor"
+                  onClick={() => refresh()}
+                  size={24}
+                />
+              </Tooltip>
+            </>
+          )}
         </div>
       </div>
 
