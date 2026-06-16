@@ -22,6 +22,8 @@ interface GetTokensPayload {
   meterId?: string;
   page?: number;
   limit?: number;
+  startDate?: string;
+  endDate?: string;
 }
 
 interface TokenState {
@@ -95,6 +97,8 @@ export const getTokens =
     const params = new URLSearchParams();
 
     if (payload.meterId) params.set("meter_id", payload.meterId);
+    if (payload.startDate) params.set("start_date", payload.startDate);
+    if (payload.endDate) params.set("end_date", payload.endDate);
     params.set("page", String(payload.page || 1));
     params.set("limit", String(payload.limit || 10));
 

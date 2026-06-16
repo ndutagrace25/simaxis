@@ -28,10 +28,21 @@ interface RevenueDataPoint {
   esperanza?: number;
 }
 
+interface GetPaymentsPayload {
+  keyword?: string;
+  page?: number;
+  limit?: number;
+  startDate?: string;
+  endDate?: string;
+}
+
 interface PaymentState {
   payments: Payment[];
   paymentsError: string | null;
   loadingPayments: boolean;
+  totalPayments: number;
+  currentPaymentsPage: number;
+  paymentsPageSize: number;
   revenue: RevenueDataPoint[];
   revenueError: string | null;
   loadingRevenue: boolean;
@@ -41,6 +52,9 @@ const initialState: PaymentState = {
   payments: [],
   paymentsError: null,
   loadingPayments: false,
+  totalPayments: 0,
+  currentPaymentsPage: 1,
+  paymentsPageSize: 10,
   revenue: [],
   revenueError: null,
   loadingRevenue: false,
@@ -53,6 +67,18 @@ const paymentSlice = createSlice({
     // PAYMENTS
     setPayments(state, action: PayloadAction<Payment[]>) {
       state.payments = action.payload;
+    },
+    setPaymentPagination(
+      state,
+      action: PayloadAction<{
+        total: number;
+        page: number;
+        limit: number;
+      }>
+    ) {
+      state.totalPayments = action.payload.total;
+      state.currentPaymentsPage = action.payload.page;
+      state.paymentsPageSize = action.payload.limit;
     },
     setPaymentError(state, action: PayloadAction<string | null>) {
       state.paymentsError = action.payload;
@@ -77,6 +103,7 @@ export const {
   // payments
   setPaymentError,
   setLoadingPayments,
+  setPaymentPagination,
   setPayments,
   // revenue
   setRevenue,
@@ -87,13 +114,28 @@ export const {
 export default paymentSlice.reducer;
 
 export const getPayments =
-  (payload?: any): AppThunk =>
+  (payload: GetPaymentsPayload = {}): AppThunk =>
   async (dispatch) => {
     dispatch(setLoadingPayments(true));
     try {
-      const response = await axiosInstance.get(`/payments?keyword=${payload}`);
+      const params = new URLSearchParams();
+
+      if (payload.keyword) params.set("keyword", payload.keyword);
+      if (payload.startDate) params.set("start_date", payload.startDate);
+      if (payload.endDate) params.set("end_date", payload.endDate);
+      params.set("page", String(payload.page || 1));
+      params.set("limit", String(payload.limit || 10));
+
+      const response = await axiosInstance.get(`/payments?${params.toString()}`);
 
       dispatch(setPayments(response.data.payments));
+      dispatch(
+        setPaymentPagination({
+          total: response.data.total || 0,
+          page: response.data.page || payload.page || 1,
+          limit: response.data.limit || payload.limit || 10,
+        })
+      );
     } catch (error: any) {
       if (error?.response?.status === 401) {
         window.location.href = "/";

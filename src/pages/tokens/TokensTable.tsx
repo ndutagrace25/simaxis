@@ -51,6 +51,8 @@ const TokensTable = () => {
   const [meter_number, setMeterNumber] = useState<any>(null);
   const [tokenPage, setTokenPage] = useState(1);
   const [downloadingCsv, setDownloadingCsv] = useState(false);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   const displayMeters = meters.map((meter: Meter) => {
     return { value: meter?.id, label: meter?.serial_number };
@@ -153,9 +155,11 @@ const TokensTable = () => {
         meterId: meter_id?.value || "",
         page: tokenPage,
         limit: pageSize,
+        startDate,
+        endDate,
       })
     );
-  }, [dispatch, meter_id?.value, pageSize, tokenPage]);
+  }, [dispatch, endDate, meter_id?.value, pageSize, startDate, tokenPage]);
 
   useEffect(() => {
     dispatch(getMeters(""));
@@ -172,6 +176,22 @@ const TokensTable = () => {
 
   const refresh = () => {
     setMeter(null);
+    setStartDate("");
+    setEndDate("");
+    setTokenPage(1);
+    dispatch(setTokenPagination({ total: totalTokens, page: 1, limit: pageSize }));
+  };
+
+  const handleDateChange = (
+    field: "start" | "end",
+    value: string
+  ) => {
+    if (field === "start") {
+      setStartDate(value);
+    } else {
+      setEndDate(value);
+    }
+
     setTokenPage(1);
     dispatch(setTokenPagination({ total: totalTokens, page: 1, limit: pageSize }));
   };
@@ -184,6 +204,14 @@ const TokensTable = () => {
 
       if (meter_id?.value) {
         params.set("meter_id", meter_id.value);
+      }
+
+      if (startDate) {
+        params.set("start_date", startDate);
+      }
+
+      if (endDate) {
+        params.set("end_date", endDate);
       }
 
       params.set("export_all", "true");
@@ -326,6 +354,11 @@ const TokensTable = () => {
     setTokenPage(page);
   };
 
+  const paginationSummary = (total: number, range: [number, number]) =>
+    isMobile
+      ? `${range[0]}-${range[1]} of ${total}`
+      : `${range[0]}-${range[1]} of ${total} tokens`;
+
   return (
     <div className="mt-3">
       {/* Header Controls */}
@@ -343,37 +376,86 @@ const TokensTable = () => {
             isMobile ? "flex-column" : "align-items-center col-md-6"
           } gap-3`}
         >
-          <Select
-            value={meter_id}
-            onChange={(option) => handleMeterChange(option)}
-            options={displayMeters}
-            placeholder="Select a meter..."
-            className={isMobile ? "w-100" : "col-md-4"}
-          />
+          <div className={isMobile ? "w-100" : "col-md-4"}>
+            <small className="text-muted d-block mb-1">Meter</small>
+            <Select
+              value={meter_id}
+              onChange={(option) => handleMeterChange(option)}
+              options={displayMeters}
+              placeholder="Select a meter..."
+              className="w-100"
+            />
+          </div>
 
-          {!isMobile && (
-            <div className="d-flex justify-content-center">
+          <div className={isMobile ? "w-100" : "col-md-3"}>
+            <small className="text-muted d-block mb-1">Start Date</small>
+            <input
+              type="date"
+              className="form-control"
+              value={startDate}
+              onChange={(event) =>
+                handleDateChange("start", event.target.value)
+              }
+              max={endDate || undefined}
+            />
+          </div>
+
+          <div className={isMobile ? "w-100" : "col-md-3"}>
+            <small className="text-muted d-block mb-1">End Date</small>
+            <input
+              type="date"
+              className="form-control"
+              value={endDate}
+              onChange={(event) => handleDateChange("end", event.target.value)}
+              min={startDate || undefined}
+            />
+          </div>
+
+          {isMobile ? (
+            <div className="d-flex w-100 gap-2">
               <Button
                 type="dashed"
-                size={isMobile ? "small" : "middle"}
+                className="flex-grow-1"
                 loading={downloadingCsv}
                 onClick={handleDownloadCsv}
               >
                 <span className="me-2">Download</span>
-                <span>
-                  <IconDownload width={16} />
-                </span>
+                <IconDownload width={16} />
+              </Button>
+              <Button
+                type="default"
+                className="flex-grow-1"
+                onClick={() => refresh()}
+              >
+                <span className="me-2">Refresh</span>
+                <IconRefresh width={16} />
               </Button>
             </div>
-          )}
+          ) : (
+            <>
+              <div className="d-flex justify-content-center">
+                <Button
+                  type="dashed"
+                  size="middle"
+                  loading={downloadingCsv}
+                  onClick={handleDownloadCsv}
+                >
+                  <span className="me-2">Download</span>
+                  <span>
+                    <IconDownload width={16} />
+                  </span>
+                </Button>
+              </div>
 
-          <Tooltip title="refresh data">
-            <IconRefresh
-              className="text-primary cursor"
-              onClick={() => refresh()}
-              size={isMobile ? 20 : 24}
-            />
-          </Tooltip>
+              <Tooltip title="refresh data">
+                <IconRefresh
+                  className="text-primary cursor"
+                  onClick={() => refresh()}
+                  size={24}
+                />
+              </Tooltip>
+            </>
+          )}
         </div>
       </div>
 
@@ -406,10 +488,9 @@ const TokensTable = () => {
                         showSizeChanger
                         pageSizeOptions={PAGE_SIZE_OPTIONS}
                         showQuickJumper={false}
-                        showTotal={(total, range) =>
-                          `${range[0]}-${range[1]} of ${total} tokens`
-                        }
+                        showTotal={paginationSummary}
                         size="small"
+                        responsive
                       />
                     </div>
                   )}
