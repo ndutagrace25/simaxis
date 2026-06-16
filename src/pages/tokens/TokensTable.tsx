@@ -36,6 +36,7 @@ const TokensTable = () => {
   const [isResendTokenModalOpen, setIsResendTokenModalOpen] = useState(false);
   const [phone, setPhone] = useState<any>(null);
   const [token, setToken] = useState<any>(null);
+  const [token_id, setTokenId] = useState<any>(null);
   const [meter_number, setMeterNumber] = useState<any>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10); // 6 cards per page for mobile
@@ -93,9 +94,14 @@ const TokensTable = () => {
     },
   ];
 
-  const handleResendToken = (token: string, meter_number: string) => {
+  const handleResendToken = (
+    token: string,
+    token_id: string,
+    meter_number: string
+  ) => {
     const data = {
       token,
+      token_id,
       meter_number,
       phone,
     };
@@ -103,6 +109,7 @@ const TokensTable = () => {
     setIsResendTokenModalOpen(false);
     setPhone("");
     setToken("");
+    setTokenId("");
     setMeterNumber("");
   };
 
@@ -127,6 +134,7 @@ const TokensTable = () => {
               onClick={() => {
                 setIsResendTokenModalOpen(true);
                 setToken(item.token);
+                setTokenId(item.id);
                 setMeterNumber(item.Meter.serial_number);
               }}
             >
@@ -217,6 +225,7 @@ const TokensTable = () => {
             onClick={() => {
               setIsResendTokenModalOpen(true);
               setToken(tokenItem.token);
+              setTokenId(tokenItem.id);
               setMeterNumber(tokenItem.Meter.serial_number);
             }}
             style={{ borderRadius: "6px" }}
@@ -354,6 +363,7 @@ const TokensTable = () => {
 
           <ResendTokenModal
             token={token}
+            token_id={token_id}
             meter_number={meter_number}
             isResendTokenModalOpen={isResendTokenModalOpen}
             handleCancelResendToken={handleCancelResendToken}

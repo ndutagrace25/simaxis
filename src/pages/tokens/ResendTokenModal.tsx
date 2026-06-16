@@ -2,6 +2,7 @@ import { Button, Input, Modal } from "antd";
 
 const ResendTokenModal = ({
   token,
+  token_id,
   meter_number,
   isResendTokenModalOpen,
   handleCancelResendToken,
@@ -10,12 +11,17 @@ const ResendTokenModal = ({
   handleResendToken,
 }: {
   token: string;
+  token_id: string;
   meter_number: string;
   isResendTokenModalOpen: boolean;
   handleCancelResendToken: () => void;
   phone: string;
   setPhone: (phone: string) => void;
-  handleResendToken: (token: string, meter_number: string) => void;
+  handleResendToken: (
+    token: string,
+    token_id: string,
+    meter_number: string
+  ) => void;
 }) => {
   return (
     <Modal
@@ -42,7 +48,7 @@ const ResendTokenModal = ({
       <Button
         type="primary"
         className="bg-success mt-3"
-        onClick={() => handleResendToken(token, meter_number)}
+        onClick={() => handleResendToken(token, token_id, meter_number)}
       >
         Resend
       </Button>
