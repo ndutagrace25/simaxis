@@ -26,6 +26,8 @@ import { GenerateToken, ResendTokenModal } from ".";
 import { isMobile } from "react-device-detect";
 import Swal from "sweetalert2";
 
+const PAGE_SIZE_OPTIONS = ["10", "50", "100"];
+
 const TokensTable = () => {
   const {
     tokens,
@@ -308,7 +310,19 @@ const TokensTable = () => {
     </Card>
   );
 
-  const handlePageChange = (page: number) => {
+  const handlePageChange = (page: number, nextPageSize?: number) => {
+    if (nextPageSize && nextPageSize !== pageSize) {
+      setTokenPage(1);
+      dispatch(
+        setTokenPagination({
+          total: totalTokens,
+          page: 1,
+          limit: nextPageSize,
+        })
+      );
+      return;
+    }
+
     setTokenPage(page);
   };
 
@@ -389,7 +403,8 @@ const TokensTable = () => {
                         total={totalTokens}
                         pageSize={pageSize}
                         onChange={handlePageChange}
-                        showSizeChanger={false}
+                        showSizeChanger
+                        pageSizeOptions={PAGE_SIZE_OPTIONS}
                         showQuickJumper={false}
                         showTotal={(total, range) =>
                           `${range[0]}-${range[1]} of ${total} tokens`
@@ -419,8 +434,10 @@ const TokensTable = () => {
                 current: currentPage,
                 total: totalTokens,
                 pageSize,
-                showSizeChanger: false,
+                showSizeChanger: true,
+                pageSizeOptions: PAGE_SIZE_OPTIONS,
                 onChange: handlePageChange,
+                onShowSizeChange: handlePageChange,
               }}
             />
           )}
