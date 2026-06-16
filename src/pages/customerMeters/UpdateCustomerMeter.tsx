@@ -34,9 +34,9 @@ const UpdateCustomerMeter = ({
   const dispatch = useDispatch<AppDispatch>();
 
   const categoryOptions = [
-    { value: "Domestic", label: "Domestic" },
-    { value: "TIER ONE", label: "TIER ONE" },
-    { value: "TIER TWO", label: "TIER TWO" },
+    { value: "Domestic", label: "Domestic - 31.74" },
+    { value: "TIER ONE", label: "TIER ONE - 45.74" },
+    { value: "TIER TWO", label: "TIER TWO - 35.74" },
   ];
 
   const handleOk = () => {

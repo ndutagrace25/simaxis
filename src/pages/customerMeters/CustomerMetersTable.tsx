@@ -81,10 +81,17 @@ const CustomerMetersTable = () => {
     return { value: meter?.id, label: meter?.serial_number };
   });
 
+  const categoryPrices: { [key: string]: string } = {
+    Domestic: "Domestic (31.74)",
+    "TIER ONE": "TIER ONE (45.74)",
+    "TIER TWO": "TIER TWO (35.74)",
+  };
+
   const dataSource = customerMeters.map((item: CustomerMeter) => {
+    const categoryValue = item.categories || "Domestic";
     return {
       ...item,
-      categories: item.categories || "Domestic",
+      categories: categoryPrices[categoryValue] || categoryPrices["Domestic"],
       created_at: moment(item.created_at).format("MM/DD/YYYY"),
       landlord: `${item?.Customer?.first_name} ${item?.Customer?.last_name}`,
       serial_number: `${
@@ -124,8 +131,9 @@ const CustomerMetersTable = () => {
   });
 
   const downloadData = customerMeters.map((item: CustomerMeter) => {
+    const categoryValue = item.categories || "Domestic";
     return {
-      category: item.categories || "Domestic",
+      category: categoryPrices[categoryValue] || categoryPrices["Domestic"],
       created_at: moment(item.created_at).format("MM/DD/YYYY"),
       landlord: `${item?.Customer?.first_name} ${item?.Customer?.last_name}`,
       serial_number: `${
@@ -289,7 +297,8 @@ const CustomerMetersTable = () => {
             <div>
               <small className="text-muted d-block">Category</small>
               <span className="fw-bold text-info">
-                {customerMeterItem.categories || "Domestic"}
+                {categoryPrices[customerMeterItem.categories || "Domestic"] ||
+                  categoryPrices["Domestic"]}
               </span>
             </div>
           </div>
