@@ -34,9 +34,15 @@ const UpdateCustomerMeter = ({
   const dispatch = useDispatch<AppDispatch>();
 
   const categoryOptions = [
-    { value: "Domestic", label: "Domestic - 31.74" },
-    { value: "TIER ONE", label: "TIER ONE - 45.74" },
-    { value: "TIER TWO", label: "TIER TWO - 35.74" },
+    { value: "Domestic", label: "Domestic - 31.75" },
+    { value: "TIER ONE", label: "TIER ONE - 60.50" },
+    { value: "TIER TWO", label: "TIER TWO - 55.25" },
+    { value: "TIER THREE", label: "TIER THREE - 50.75" },
+    { value: "TIER FOUR", label: "TIER FOUR - 45.50" },
+    { value: "TIER FIVE", label: "TIER FIVE - 40.25" },
+    { value: "TIER SIX", label: "TIER SIX - 35.75" },
+    { value: "TIER SEVEN", label: "TIER SEVEN - 35.75" },
+    { value: "TIER EIGHT", label: "TIER EIGHT - 25.00" },
   ];
 
   const handleOk = () => {

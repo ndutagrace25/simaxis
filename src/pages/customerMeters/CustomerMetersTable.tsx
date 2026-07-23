@@ -74,9 +74,15 @@ const CustomerMetersTable = () => {
   });
 
   const displayCategories = [
-    { value: "Domestic", label: "Domestic (31.74)" },
-    { value: "TIER ONE", label: "TIER ONE (45.74)" },
-    { value: "TIER TWO", label: "TIER TWO (35.74)" },
+    { value: "Domestic", label: "Domestic (31.75)" },
+    { value: "TIER ONE", label: "TIER ONE (60.50)" },
+    { value: "TIER TWO", label: "TIER TWO (55.25)" },
+    { value: "TIER THREE", label: "TIER THREE (50.75)" },
+    { value: "TIER FOUR", label: "TIER FOUR (45.50)" },
+    { value: "TIER FIVE", label: "TIER FIVE (40.25)" },
+    { value: "TIER SIX", label: "TIER SIX (35.75)" },
+    { value: "TIER SEVEN", label: "TIER SEVEN (35.75)" },
+    { value: "TIER EIGHT", label: "TIER EIGHT (25.00)" },
   ];
 
   const displayLandlords = customers.map((landlord: Customer) => {
@@ -90,9 +96,15 @@ const CustomerMetersTable = () => {
   });
 
   const categoryPrices: { [key: string]: string } = {
-    Domestic: "Domestic (31.74)",
-    "TIER ONE": "TIER ONE (45.74)",
-    "TIER TWO": "TIER TWO (35.74)",
+    Domestic: "Domestic (31.75)",
+    "TIER ONE": "TIER ONE (60.50)",
+    "TIER TWO": "TIER TWO (55.25)",
+    "TIER THREE": "TIER THREE (50.75)",
+    "TIER FOUR": "TIER FOUR (45.50)",
+    "TIER FIVE": "TIER FIVE (40.25)",
+    "TIER SIX": "TIER SIX (35.75)",
+    "TIER SEVEN": "TIER SEVEN (35.75)",
+    "TIER EIGHT": "TIER EIGHT (25.00)",
   };
 
   const dataSource = customerMeters.map((item: CustomerMeter) => {
