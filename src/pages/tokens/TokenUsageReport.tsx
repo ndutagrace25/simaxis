@@ -17,6 +17,24 @@ import Swal from "sweetalert2";
 
 const PAGE_SIZE_OPTIONS = ["10", "50", "100"];
 
+const MONTH_OPTIONS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+].map((label, index) => ({ value: index + 1, label }));
+
+const CURRENT_YEAR = new Date().getFullYear();
+const YEAR_OPTIONS = Array.from({ length: 10 }, (_, index) => CURRENT_YEAR - index);
+
 const customerName = (row: TokenUsageReportRow) => {
   const name = [row.first_name, row.middle_name, row.last_name]
     .filter(Boolean)
@@ -31,14 +49,16 @@ const TokenUsageReport = () => {
   const { meters } = useSelector((state: RootState) => state.meter);
   const dispatch = useDispatch<AppDispatch>();
 
-  const [monthYear, setMonthYear] = useState(
-    new Date().toISOString().slice(0, 7)
-  );
+  const [year, setYear] = useState(CURRENT_YEAR);
+  const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [meter_id, setMeter] = useState<any>(null);
   const [reportPage, setReportPage] = useState(1);
   const [downloadingCsv, setDownloadingCsv] = useState(false);
 
-  const [year, month] = monthYear.split("-").map(Number);
+  const monthOptions =
+    year === CURRENT_YEAR
+      ? MONTH_OPTIONS.filter((option) => option.value <= new Date().getMonth() + 1)
+      : MONTH_OPTIONS;
 
   const displayMeters = meters.map((meter: Meter) => {
     return { value: meter?.id, label: meter?.serial_number };
@@ -111,14 +131,24 @@ const TokenUsageReport = () => {
     setReportPage(1);
   };
 
-  const handleMonthYearChange = (value: string) => {
-    setMonthYear(value);
+  const handleYearChange = (value: number) => {
+    const currentMonth = new Date().getMonth() + 1;
+    setYear(value);
+    if (value === CURRENT_YEAR && month > currentMonth) {
+      setMonth(currentMonth);
+    }
+    setReportPage(1);
+  };
+
+  const handleMonthChange = (value: number) => {
+    setMonth(value);
     setReportPage(1);
   };
 
   const refresh = () => {
     setMeter(null);
-    setMonthYear(new Date().toISOString().slice(0, 7));
+    setYear(CURRENT_YEAR);
+    setMonth(new Date().getMonth() + 1);
     setReportPage(1);
   };
 
@@ -178,9 +208,10 @@ const TokenUsageReport = () => {
       const downloadUrl = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = downloadUrl;
-      link.download = `TokenUsageReport_${monthYear}_${moment(new Date()).format(
-        "DD-MM-YYYY_HH-mm-ss"
-      )}.csv`;
+      link.download = `TokenUsageReport_${year}-${String(month).padStart(
+        2,
+        "0"
+      )}_${moment(new Date()).format("DD-MM-YYYY_HH-mm-ss")}.csv`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -226,15 +257,34 @@ const TokenUsageReport = () => {
             isMobile ? "flex-column" : "align-items-center col-md-8"
           } gap-3`}
         >
-          <div className={isMobile ? "w-100" : "col-md-4"}>
+          <div className={isMobile ? "w-100" : "col-md-3"}>
+            <small className="text-muted d-block mb-1">Year</small>
+            <select
+              className="form-select"
+              value={year}
+              onChange={(event) => handleYearChange(Number(event.target.value))}
+            >
+              {YEAR_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className={isMobile ? "w-100" : "col-md-3"}>
             <small className="text-muted d-block mb-1">Month</small>
-            <input
-              type="month"
-              className="form-control"
-              value={monthYear}
-              onChange={(event) => handleMonthYearChange(event.target.value)}
-              max={new Date().toISOString().slice(0, 7)}
-            />
+            <select
+              className="form-select"
+              value={month}
+              onChange={(event) => handleMonthChange(Number(event.target.value))}
+            >
+              {monthOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className={isMobile ? "w-100" : "col-md-4"}>
