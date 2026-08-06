@@ -4,7 +4,7 @@ import { AllCustomerMeters } from "./customerMeters";
 import { Tabs } from "antd";
 import type { TabsProps } from "antd";
 import { AllPayments } from "./payments";
-import { AllTokens } from "./tokens";
+import { AllTokens, TokenUsageReport } from "./tokens";
 import { RevenueReport } from "./revenue";
 import { appSession } from "../utils/appStorage";
 
@@ -54,6 +54,11 @@ const AdminTabs = () => {
             key: "7",
             label: "Revenue Reports",
             children: <RevenueReport />,
+          },
+          {
+            key: "8",
+            label: "Token Usage Report",
+            children: <TokenUsageReport />,
           },
         ]
       : baseItems;

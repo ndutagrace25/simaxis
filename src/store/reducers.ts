@@ -7,6 +7,7 @@ import meterReducer from "../features/meter/meterSlice";
 import paymentReducer from "../features/payment/paymentSlice";
 import tenantReducer from "../features/tenant/tenantSlice";
 import tokenReducer from "../features/tokens/tokenSlice";
+import tokenUsageReportReducer from "../features/tokens/tokenUsageReportSlice";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   tenant: tenantReducer,
   payment: paymentReducer,
   token: tokenReducer,
+  tokenUsageReport: tokenUsageReportReducer,
 });
 
 export default rootReducer;
