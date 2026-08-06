@@ -41,7 +41,7 @@ const UpdateCustomerMeter = ({
     { value: "TIER FOUR", label: "TIER FOUR - 45.50" },
     { value: "TIER FIVE", label: "TIER FIVE - 40.25" },
     { value: "TIER SIX", label: "TIER SIX - 35.75" },
-    { value: "TIER SEVEN", label: "TIER SEVEN - 35.75" },
+    { value: "TIER SEVEN", label: "TIER SEVEN - 32.65" },
     { value: "TIER EIGHT", label: "TIER EIGHT - 25.00" },
   ];
 
