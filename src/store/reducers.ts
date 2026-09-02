@@ -8,6 +8,7 @@ import paymentReducer from "../features/payment/paymentSlice";
 import tenantReducer from "../features/tenant/tenantSlice";
 import tokenReducer from "../features/tokens/tokenSlice";
 import tokenUsageReportReducer from "../features/tokens/tokenUsageReportSlice";
+import websiteTokenChecksReducer from "../features/tokens/websiteTokenChecksSlice";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
   payment: paymentReducer,
   token: tokenReducer,
   tokenUsageReport: tokenUsageReportReducer,
+  websiteTokenChecks: websiteTokenChecksReducer,
 });
 
 export default rootReducer;
