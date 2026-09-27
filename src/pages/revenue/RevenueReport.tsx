@@ -42,7 +42,12 @@ interface CustomTooltipProps extends TooltipProps<number, string> {
 
 const RevenueChart: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { revenue, loadingRevenue } = useSelector(
+  const {
+    revenue,
+    loadingRevenue,
+    esperanzaPaidToDate,
+    esperanzaBalanceToDate,
+  } = useSelector(
     (state: RootState) => state.payment
   );
   const [filterType, setFilterType] = useState<FilterType>("daily");
@@ -272,6 +277,26 @@ const RevenueChart: React.FC = () => {
                       <h6 className="card-title mb-2 fs-6">ESPERANZA (1.5%)</h6>
                       <div className="fs-7 fw-bold">
                         KES {totalEsperanza.toLocaleString()}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-lg-3 col-md-6 col-sm-12">
+                  <div className="card text-white h-100" style={{ backgroundColor: "#16a34a" }}>
+                    <div className="card-body p-3">
+                      <h6 className="card-title mb-2 fs-6">ESPERANZA PAID TO DATE</h6>
+                      <div className="fs-7 fw-bold">
+                        KES {esperanzaPaidToDate.toLocaleString()}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-lg-3 col-md-6 col-sm-12">
+                  <div className="card text-white h-100" style={{ backgroundColor: esperanzaBalanceToDate > 0 ? "#dc2626" : "#475569" }}>
+                    <div className="card-body p-3">
+                      <h6 className="card-title mb-2 fs-6">ESPERANZA BALANCE TO DATE</h6>
+                      <div className="fs-7 fw-bold">
+                        KES {esperanzaBalanceToDate.toLocaleString()}
                       </div>
                     </div>
                   </div>

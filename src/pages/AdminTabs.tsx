@@ -3,7 +3,7 @@ import { AllMeters } from "./meters";
 import { AllCustomerMeters } from "./customerMeters";
 import { Tabs } from "antd";
 import type { TabsProps } from "antd";
-import { AllPayments } from "./payments";
+import { AllPayments, EsperanzaPaymentsTable } from "./payments";
 import {
   AllTokens,
   TokenUsageReport,
@@ -71,6 +71,15 @@ const AdminTabs = () => {
           },
         ]
       : baseItems;
+
+  // Esperanza payments (and their CSV download) are for directors only
+  if (user?.role === "Super Admin") {
+    items.push({
+      key: "10",
+      label: "Esperanza Payments",
+      children: <EsperanzaPaymentsTable />,
+    });
+  }
 
   return <Tabs defaultActiveKey="1" items={items} onChange={onChange} />;
 };

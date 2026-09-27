@@ -44,6 +44,8 @@ interface PaymentState {
   currentPaymentsPage: number;
   paymentsPageSize: number;
   revenue: RevenueDataPoint[];
+  esperanzaPaidToDate: number;
+  esperanzaBalanceToDate: number;
   revenueError: string | null;
   loadingRevenue: boolean;
 }
@@ -56,6 +58,8 @@ const initialState: PaymentState = {
   currentPaymentsPage: 1,
   paymentsPageSize: 10,
   revenue: [],
+  esperanzaPaidToDate: 0,
+  esperanzaBalanceToDate: 0,
   revenueError: null,
   loadingRevenue: false,
 };
@@ -90,6 +94,13 @@ const paymentSlice = createSlice({
     setRevenue(state, action: PayloadAction<RevenueDataPoint[]>) {
       state.revenue = action.payload;
     },
+    setEsperanzaToDate(
+      state,
+      action: PayloadAction<{ paid: number; balance: number }>
+    ) {
+      state.esperanzaPaidToDate = action.payload.paid;
+      state.esperanzaBalanceToDate = action.payload.balance;
+    },
     setRevenueError(state, action: PayloadAction<string | null>) {
       state.revenueError = action.payload;
     },
@@ -107,6 +118,7 @@ export const {
   setPayments,
   // revenue
   setRevenue,
+  setEsperanzaToDate,
   setRevenueError,
   setLoadingRevenue,
 } = paymentSlice.actions;
@@ -164,6 +176,12 @@ export const getRevenueData =
         `/payments/revenue?filterType=${payload.filterType}&selectedDate=${payload.selectedDate}`
       );
       dispatch(setRevenue(response.data.data));
+      dispatch(
+        setEsperanzaToDate({
+          paid: response.data.esperanzaPaidToDate || 0,
+          balance: response.data.esperanzaBalanceToDate || 0,
+        })
+      );
     } catch (error: any) {
       dispatch(setRevenueError(error.message));
     } finally {
